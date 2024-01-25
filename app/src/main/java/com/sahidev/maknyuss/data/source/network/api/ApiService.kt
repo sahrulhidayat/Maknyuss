@@ -13,7 +13,7 @@ interface ApiService {
     suspend fun searchRecipe(
         @Query("query") query: String,
         @Query("number") offset: Int = 0,
-        @Query("number") number: Int = 5,
+        @Query("number") number: Int = 10,
         @Query("apiKey") apiKey: String = BuildConfig.API_KEY,
     ): SearchResponse
 
@@ -26,7 +26,7 @@ interface ApiService {
 
     @GET("recipes/random")
     suspend fun getRandomRecipes(
-        @Query("number") number: Int = 5,
+        @Query("number") number: Int = 10,
         @Query("apiKey") apiKey: String = BuildConfig.API_KEY
     ): RecipesResponse
 }
