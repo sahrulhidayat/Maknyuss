@@ -12,13 +12,13 @@ interface ApiService {
     @GET("recipes/complexSearch")
     suspend fun searchRecipe(
         @Query("query") query: String,
-        @Query("maxFat") maxFat: Int,
-        @Query("number") number: Int,
+        @Query("number") offset: Int = 0,
+        @Query("number") number: Int = 5,
         @Query("apiKey") apiKey: String = BuildConfig.API_KEY,
     ): SearchResponse
 
     @GET("recipes/{id}/information")
-    suspend fun getRecipeInformation(
+    suspend fun getRecipeInfo(
         @Path("id") id: Int,
         @Query("includeNutrition") includeNutrition: Boolean = false,
         @Query("apiKey") apiKey: String = BuildConfig.API_KEY,
@@ -26,7 +26,7 @@ interface ApiService {
 
     @GET("recipes/random")
     suspend fun getRandomRecipes(
-        @Query("number") number: Int,
+        @Query("number") number: Int = 5,
         @Query("apiKey") apiKey: String = BuildConfig.API_KEY
     ): RecipesResponse
 }
