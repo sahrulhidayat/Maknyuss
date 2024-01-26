@@ -10,8 +10,9 @@ import com.sahidev.maknyuss.domain.model.Ingredient
 import com.sahidev.maknyuss.domain.model.Instruction
 import com.sahidev.maknyuss.domain.model.Recipe
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class LocalDataSource(
+class LocalDataSource @Inject constructor(
     private val recipeDao: RecipeDao,
     private val instructionDao: InstructionDao,
     private val ingredientDao: IngredientDao,
