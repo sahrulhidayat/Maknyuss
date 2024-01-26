@@ -21,7 +21,6 @@ data class Recipe(
     val cuisines: String? = null,
     val dishType: String? = null,
     val source: String? = null,
-    var isSaved: Boolean = false
 )
 
 data class CompleteRecipe(
