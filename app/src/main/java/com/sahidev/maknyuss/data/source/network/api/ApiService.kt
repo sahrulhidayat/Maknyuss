@@ -4,11 +4,15 @@ import com.sahidev.maknyuss.BuildConfig
 import com.sahidev.maknyuss.data.source.network.response.RecipeInfoResponse
 import com.sahidev.maknyuss.data.source.network.response.RecipesResponse
 import com.sahidev.maknyuss.data.source.network.response.SearchResponse
+import com.sahidev.maknyuss.data.utils.Constants.CACHE_CONTROL_HEADER
+import com.sahidev.maknyuss.data.utils.Constants.NO_CACHE
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
+    @Headers("$CACHE_CONTROL_HEADER: $NO_CACHE")
     @GET("recipes/complexSearch")
     suspend fun searchRecipe(
         @Query("query") query: String,
@@ -17,6 +21,7 @@ interface ApiService {
         @Query("apiKey") apiKey: String = BuildConfig.API_KEY,
     ): SearchResponse
 
+    @Headers("$CACHE_CONTROL_HEADER: $NO_CACHE")
     @GET("recipes/{id}/information")
     suspend fun getRecipeInfo(
         @Path("id") id: Int,
@@ -24,6 +29,7 @@ interface ApiService {
         @Query("apiKey") apiKey: String = BuildConfig.API_KEY,
     ): RecipeInfoResponse
 
+    @Headers("$CACHE_CONTROL_HEADER: $NO_CACHE")
     @GET("recipes/random")
     suspend fun getRandomRecipes(
         @Query("number") number: Int = 10,

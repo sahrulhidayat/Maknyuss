@@ -76,7 +76,10 @@ dependencies {
     implementation("androidx.compose.material3:material3")
 
     //Retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    val retrofitVersion = "2.9.0"
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     //Gson
     implementation("com.google.code.gson:gson:2.10.1")
