@@ -5,14 +5,11 @@ import androidx.room.Room
 import com.sahidev.maknyuss.data.repository.EquipmentRepositoryImpl
 import com.sahidev.maknyuss.data.repository.IngredientRepositoryImpl
 import com.sahidev.maknyuss.data.repository.InstructionRepositoryImpl
-import com.sahidev.maknyuss.data.repository.RecipeRepositoryImpl
 import com.sahidev.maknyuss.data.source.local.LocalDataSource
 import com.sahidev.maknyuss.data.source.local.RecipeDatabase
-import com.sahidev.maknyuss.data.source.network.RemoteDataSource
 import com.sahidev.maknyuss.domain.repository.EquipmentRepository
 import com.sahidev.maknyuss.domain.repository.IngredientRepository
 import com.sahidev.maknyuss.domain.repository.InstructionRepository
-import com.sahidev.maknyuss.domain.repository.RecipeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,18 +41,6 @@ object LocalModule {
             db.instructionDao,
             db.ingredientDao,
             db.equipmentDao
-        )
-    }
-
-    @Provides
-    @Singleton
-    fun provideRecipeRepository(
-        localDataSource: LocalDataSource,
-        remoteDataSource: RemoteDataSource
-    ): RecipeRepository {
-        return RecipeRepositoryImpl(
-            localDataSource,
-            remoteDataSource
         )
     }
 
