@@ -3,14 +3,17 @@ package com.sahidev.maknyuss.data.source.network
 import android.util.Log
 import com.sahidev.maknyuss.data.source.network.api.ApiResponse
 import com.sahidev.maknyuss.data.source.network.api.ApiService
+import com.sahidev.maknyuss.data.source.network.interceptor.NoNetworkException
 import com.sahidev.maknyuss.data.source.network.response.RecipeInfoResponse
 import com.sahidev.maknyuss.data.source.network.response.RecipesItem
 import com.sahidev.maknyuss.data.source.network.response.ResultsItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.lang.Exception
+import javax.inject.Inject
 
-class RemoteDataSource(private val apiService: ApiService) {
+class RemoteDataSource @Inject constructor(
+    private val apiService: ApiService
+) {
 
     suspend fun searchRecipe(
         query: String,
@@ -25,9 +28,17 @@ class RemoteDataSource(private val apiService: ApiService) {
                 } else {
                     emit(ApiResponse.Empty)
                 }
-            } catch (e: Exception) {
-                emit(ApiResponse.Error(e.toString()))
-                Log.e(TAG, "searchRecipe: $e")
+            } catch (exception: Exception) {
+                when (exception) {
+                    is NoNetworkException -> {
+                        emit(ApiResponse.Error("Network error, please try again later"))
+                    }
+
+                    else -> {
+                        emit(ApiResponse.Error(exception.toString()))
+                        Log.e(TAG, "searchRecipe: $exception")
+                    }
+                }
             }
         }
     }
@@ -37,9 +48,17 @@ class RemoteDataSource(private val apiService: ApiService) {
             try {
                 val response = apiService.getRecipeInfo(id)
                 emit(ApiResponse.Success(response))
-            } catch (e: Exception) {
-                emit(ApiResponse.Error(e.toString()))
-                Log.e(TAG, "getRecipeInfo: $e")
+            } catch (exception: Exception) {
+                when (exception) {
+                    is NoNetworkException -> {
+                        emit(ApiResponse.Error("Network error, please try again later"))
+                    }
+
+                    else -> {
+                        emit(ApiResponse.Error(exception.toString()))
+                        Log.e(TAG, "getRecipeInfo: $exception")
+                    }
+                }
             }
         }
     }
@@ -54,9 +73,17 @@ class RemoteDataSource(private val apiService: ApiService) {
                 } else {
                     emit(ApiResponse.Empty)
                 }
-            } catch (e: Exception) {
-                emit(ApiResponse.Error(e.toString()))
-                Log.e(TAG, "getRandomRecipes: $e")
+            } catch (exception: Exception) {
+                when (exception) {
+                    is NoNetworkException -> {
+                        emit(ApiResponse.Error("Network error, please try again later"))
+                    }
+
+                    else -> {
+                        emit(ApiResponse.Error(exception.toString()))
+                        Log.e(TAG, "getRandomRecipes: $exception")
+                    }
+                }
             }
         }
     }
