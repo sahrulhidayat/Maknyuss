@@ -3,7 +3,7 @@ package com.sahidev.maknyuss.data.source.network
 import android.util.Log
 import com.sahidev.maknyuss.data.source.network.api.ApiResponse
 import com.sahidev.maknyuss.data.source.network.api.ApiService
-import com.sahidev.maknyuss.data.source.network.interceptor.NoNetworkException
+import com.sahidev.maknyuss.data.source.network.monitor.NoNetworkException
 import com.sahidev.maknyuss.data.source.network.response.RecipeInfoResponse
 import com.sahidev.maknyuss.data.source.network.response.RecipesItem
 import com.sahidev.maknyuss.data.source.network.response.ResultsItem

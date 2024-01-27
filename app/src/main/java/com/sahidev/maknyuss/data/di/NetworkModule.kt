@@ -2,6 +2,7 @@ package com.sahidev.maknyuss.data.di
 
 import android.content.Context
 import com.sahidev.maknyuss.BuildConfig
+import com.sahidev.maknyuss.data.source.network.RemoteDataSource
 import com.sahidev.maknyuss.data.source.network.api.ApiService
 import com.sahidev.maknyuss.data.source.network.interceptor.CacheInterceptor
 import com.sahidev.maknyuss.data.source.network.interceptor.NetworkMonitorInterceptor
@@ -26,6 +27,7 @@ import javax.inject.Singleton
 object NetworkModule {
 
     @Provides
+    @Singleton
     fun provideNetworkMonitor(
         @ApplicationContext appContext: Context
     ): NetworkState {
@@ -61,5 +63,13 @@ object NetworkModule {
             .build()
 
         retrofit.create(ApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRemoteDataSource(
+        apiService: ApiService
+    ): RemoteDataSource {
+        return RemoteDataSource(apiService)
     }
 }
