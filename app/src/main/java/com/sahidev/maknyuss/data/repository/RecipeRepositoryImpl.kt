@@ -2,6 +2,9 @@ package com.sahidev.maknyuss.data.repository
 
 import com.sahidev.maknyuss.data.source.local.LocalDataSource
 import com.sahidev.maknyuss.data.source.network.RemoteDataSource
+import com.sahidev.maknyuss.domain.model.Equipment
+import com.sahidev.maknyuss.domain.model.Ingredient
+import com.sahidev.maknyuss.domain.model.Instruction
 import com.sahidev.maknyuss.domain.model.Recipe
 import com.sahidev.maknyuss.domain.repository.RecipeRepository
 import kotlinx.coroutines.flow.Flow
@@ -35,4 +38,15 @@ class RecipeRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    override suspend fun addInstruction(instruction: Instruction) {
+        localDataSource.addInstruction(instruction)
+    }
+
+    override suspend fun addIngredient(ingredient: Ingredient) {
+        localDataSource.addIngredient(ingredient)
+    }
+
+    override suspend fun addEquipment(equipment: Equipment) {
+        localDataSource.addEquipment(equipment)
+    }
 }

@@ -2,14 +2,8 @@ package com.sahidev.maknyuss.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.sahidev.maknyuss.data.repository.EquipmentRepositoryImpl
-import com.sahidev.maknyuss.data.repository.IngredientRepositoryImpl
-import com.sahidev.maknyuss.data.repository.InstructionRepositoryImpl
 import com.sahidev.maknyuss.data.source.local.LocalDataSource
 import com.sahidev.maknyuss.data.source.local.RecipeDatabase
-import com.sahidev.maknyuss.domain.repository.EquipmentRepository
-import com.sahidev.maknyuss.domain.repository.IngredientRepository
-import com.sahidev.maknyuss.domain.repository.InstructionRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,29 +36,5 @@ object LocalModule {
             db.ingredientDao,
             db.equipmentDao
         )
-    }
-
-    @Provides
-    @Singleton
-    fun provideInstructionRepository(
-        localDataSource: LocalDataSource
-    ): InstructionRepository {
-        return InstructionRepositoryImpl(localDataSource)
-    }
-
-    @Provides
-    @Singleton
-    fun provideIngredientRepository(
-        localDataSource: LocalDataSource
-    ): IngredientRepository {
-        return IngredientRepositoryImpl(localDataSource)
-    }
-
-    @Provides
-    @Singleton
-    fun provideEquipmentRepository(
-        localDataSource: LocalDataSource
-    ): EquipmentRepository {
-        return EquipmentRepositoryImpl(localDataSource)
     }
 }
