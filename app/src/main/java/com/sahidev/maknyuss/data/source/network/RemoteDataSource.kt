@@ -7,6 +7,7 @@ import com.sahidev.maknyuss.data.source.network.monitor.NoNetworkException
 import com.sahidev.maknyuss.data.source.network.response.RecipeInfoResponse
 import com.sahidev.maknyuss.data.source.network.response.RecipesItem
 import com.sahidev.maknyuss.data.source.network.response.ResultsItem
+import com.sahidev.maknyuss.data.utils.Constants.NETWORK_ERROR_MESSAGE
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -31,7 +32,7 @@ class RemoteDataSource @Inject constructor(
             } catch (exception: Exception) {
                 when (exception) {
                     is NoNetworkException -> {
-                        emit(ApiResponse.Error("Network error, please try again later"))
+                        emit(ApiResponse.Error(NETWORK_ERROR_MESSAGE))
                     }
 
                     else -> {
@@ -51,7 +52,7 @@ class RemoteDataSource @Inject constructor(
             } catch (exception: Exception) {
                 when (exception) {
                     is NoNetworkException -> {
-                        emit(ApiResponse.Error("Network error, please try again later"))
+                        emit(ApiResponse.Error(NETWORK_ERROR_MESSAGE))
                     }
 
                     else -> {
@@ -76,7 +77,7 @@ class RemoteDataSource @Inject constructor(
             } catch (exception: Exception) {
                 when (exception) {
                     is NoNetworkException -> {
-                        emit(ApiResponse.Error("Network error, please try again later"))
+                        emit(ApiResponse.Error(NETWORK_ERROR_MESSAGE))
                     }
 
                     else -> {
