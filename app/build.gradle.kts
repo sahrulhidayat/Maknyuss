@@ -31,7 +31,6 @@ android {
         }
 
         buildConfigField("String", "BASE_URL", "\"https://api.spoonacular.com/\"")
-        buildConfigField("String", "API_KEY", "\"9f1eab677e6b469cb3b9fae3faad0dd7\"")
     }
 
     buildTypes {
