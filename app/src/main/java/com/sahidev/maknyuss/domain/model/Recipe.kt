@@ -19,7 +19,7 @@ data class Recipe(
     val readyMinutes: Int? = null,
     val servings: Int? = null,
     val cuisines: String? = null,
-    val dishType: String? = null,
+    val dishTypes: String? = null,
     val source: String? = null,
 )
 
