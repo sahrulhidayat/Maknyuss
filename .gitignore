@@ -1,6 +1,7 @@
 *.iml
 .gradle
 /local.properties
+/credentials.properties
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
@@ -14,3 +15,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+/app/src/main/cpp/
+/app/src/main/java/com/sahidev/maknyuss/Secrets.kt

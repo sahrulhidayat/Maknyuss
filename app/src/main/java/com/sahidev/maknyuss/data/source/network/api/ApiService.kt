@@ -1,6 +1,7 @@
 package com.sahidev.maknyuss.data.source.network.api
 
 import com.sahidev.maknyuss.BuildConfig
+import com.sahidev.maknyuss.Secrets
 import com.sahidev.maknyuss.data.source.network.response.RecipeInfoResponse
 import com.sahidev.maknyuss.data.source.network.response.RecipesResponse
 import com.sahidev.maknyuss.data.source.network.response.SearchResponse
@@ -11,6 +12,7 @@ import retrofit2.http.Headers
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+private val API_KEY = Secrets().getApiKey(BuildConfig.APPLICATION_ID)
 interface ApiService {
     @Headers("$CACHE_CONTROL_HEADER: $NO_CACHE")
     @GET("recipes/complexSearch")
@@ -18,7 +20,7 @@ interface ApiService {
         @Query("query") query: String,
         @Query("number") offset: Int = 0,
         @Query("number") number: Int = 10,
-        @Query("apiKey") apiKey: String = BuildConfig.API_KEY,
+        @Query("apiKey") apiKey: String = API_KEY,
     ): SearchResponse
 
     @Headers("$CACHE_CONTROL_HEADER: $NO_CACHE")
@@ -26,13 +28,13 @@ interface ApiService {
     suspend fun getRecipeInfo(
         @Path("id") id: Int,
         @Query("includeNutrition") includeNutrition: Boolean = false,
-        @Query("apiKey") apiKey: String = BuildConfig.API_KEY,
+        @Query("apiKey") apiKey: String = API_KEY,
     ): RecipeInfoResponse
 
     @Headers("$CACHE_CONTROL_HEADER: $NO_CACHE")
     @GET("recipes/random")
     suspend fun getRandomRecipes(
         @Query("number") number: Int = 10,
-        @Query("apiKey") apiKey: String = BuildConfig.API_KEY
+        @Query("apiKey") apiKey: String = API_KEY
     ): RecipesResponse
 }
