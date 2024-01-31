@@ -1,9 +1,7 @@
 package com.sahidev.maknyuss.domain.model
 
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.Relation
 
 @Entity
 data class Recipe(
@@ -21,19 +19,25 @@ data class Recipe(
     val cuisines: String? = null,
     val dishTypes: String? = null,
     val source: String? = null,
+    val instructions: List<Instruction> = emptyList(),
+    val ingredients: List<Ingredient> = emptyList(),
 )
 
-data class CompleteRecipe(
-    @Embedded
-    val recipe: Recipe,
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "recipeId",
-    )
+data class Instruction(
+    val number: Int,
+    val step: String,
+    val equipments: List<Equipment>,
     val ingredients: List<Ingredient>,
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "recipeId",
-    )
-    val instructions: List<Instruction>,
+)
+
+data class Equipment(
+    val name: String,
+    val image: String,
+)
+
+data class Ingredient(
+    val name: String,
+    val image: String,
+    val nameClean: String? = null,
+    val measures: String? = null,
 )

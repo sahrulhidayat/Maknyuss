@@ -80,7 +80,7 @@ data class StepsItem(
 	val ingredients: List<IngredientsItem>,
 
 	@field:SerializedName("equipment")
-	val equipment: List<EquipmentItem>,
+	val equipments: List<EquipmentItem>,
 
 	@field:SerializedName("step")
 	val step: String
