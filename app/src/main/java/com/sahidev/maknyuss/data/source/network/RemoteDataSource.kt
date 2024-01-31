@@ -7,6 +7,7 @@ import com.sahidev.maknyuss.data.source.network.monitor.NoNetworkException
 import com.sahidev.maknyuss.data.utils.Constants.NETWORK_ERROR_MESSAGE
 import com.sahidev.maknyuss.data.utils.DataMapper
 import com.sahidev.maknyuss.domain.model.Recipe
+import com.sahidev.maknyuss.domain.model.RecipeAndInstructions
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -47,7 +48,7 @@ class RemoteDataSource @Inject constructor(
         }
     }
 
-    suspend fun getRecipeInfo(id: Int): Flow<ApiResponse<Recipe>> {
+    suspend fun getRecipeInfo(id: Int): Flow<ApiResponse<RecipeAndInstructions>> {
         return flow {
             try {
                 val response = apiService.getRecipeInfo(id)

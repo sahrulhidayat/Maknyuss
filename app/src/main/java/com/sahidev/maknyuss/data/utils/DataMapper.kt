@@ -11,6 +11,7 @@ import com.sahidev.maknyuss.domain.model.Equipment
 import com.sahidev.maknyuss.domain.model.Ingredient
 import com.sahidev.maknyuss.domain.model.Instruction
 import com.sahidev.maknyuss.domain.model.Recipe
+import com.sahidev.maknyuss.domain.model.RecipeAndInstructions
 
 object DataMapper {
 
@@ -24,8 +25,17 @@ object DataMapper {
         }
     }
 
-    fun mapRecipeInfoResponseToModel(input: RecipeInfoResponse): Recipe {
-        return Recipe(
+    fun mapRecipeInfoResponseToModel(input: RecipeInfoResponse): RecipeAndInstructions {
+        val equipments = arrayListOf<Equipment>()
+        val instructions = mapRecipeInstructions(
+            input.id,
+            input.analyzedInstructions
+        )
+        instructions.forEach { instruction ->
+            instruction.equipments.forEach { equipments.add(it) }
+        }
+
+        val recipe = Recipe(
             input.id,
             input.title,
             input.image,
@@ -39,8 +49,13 @@ object DataMapper {
             input.cuisines.joinToString(separator = ", "),
             input.dishTypes.joinToString(separator = ", "),
             input.source,
-            mapRecipeInstructions(input.analyzedInstructions),
+            equipments,
             mapExtendedIngredients(input.extendedIngredients)
+        )
+
+        return RecipeAndInstructions(
+            recipe,
+            instructions
         )
     }
 
@@ -58,6 +73,7 @@ object DataMapper {
     }
 
     private fun mapRecipeInstructions(
+        recipeId: Int,
         input: List<AnalyzedInstructionsItem>
     ): List<Instruction> {
         return input[0].steps.map {
@@ -65,7 +81,8 @@ object DataMapper {
                 it.number,
                 it.step,
                 mapEquipments(it.equipments),
-                mapIngredients(it.ingredients)
+                mapIngredients(it.ingredients),
+                recipeId
             )
         }
     }

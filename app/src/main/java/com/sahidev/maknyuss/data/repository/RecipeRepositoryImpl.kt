@@ -5,10 +5,9 @@ import com.sahidev.maknyuss.data.source.local.LocalDataSource
 import com.sahidev.maknyuss.data.source.network.RemoteDataSource
 import com.sahidev.maknyuss.data.source.network.api.ApiResponse
 import com.sahidev.maknyuss.domain.Resource
-import com.sahidev.maknyuss.domain.model.Equipment
-import com.sahidev.maknyuss.domain.model.Ingredient
 import com.sahidev.maknyuss.domain.model.Instruction
 import com.sahidev.maknyuss.domain.model.Recipe
+import com.sahidev.maknyuss.domain.model.RecipeAndInstructions
 import com.sahidev.maknyuss.domain.repository.RecipeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -35,18 +34,18 @@ class RecipeRepositoryImpl @Inject constructor(
         }.asFlow()
     }
 
-    override suspend fun getRecipeInfo(id: Int): Flow<Resource<Recipe>> {
-        return object : NetworkBoundResource<Recipe>() {
-            override fun loadFromDB(): Flow<Recipe> {
+    override suspend fun getRecipeInfo(id: Int): Flow<Resource<RecipeAndInstructions>> {
+        return object : NetworkBoundResource<RecipeAndInstructions>() {
+            override fun loadFromDB(): Flow<RecipeAndInstructions> {
                 return localDataSource.getRecipeInfo(id)
             }
 
-            override suspend fun createCall(): Flow<ApiResponse<Recipe>> {
+            override suspend fun createCall(): Flow<ApiResponse<RecipeAndInstructions>> {
                 return remoteDataSource.getRecipeInfo(id)
             }
 
-            override fun shouldFetch(data: Recipe?): Boolean {
-                return data?.summary.isNullOrBlank()
+            override fun shouldFetch(data: RecipeAndInstructions?): Boolean {
+                return data?.recipe?.summary.isNullOrBlank() || data?.instructions.isNullOrEmpty()
             }
         }.asFlow()
     }
@@ -95,13 +94,5 @@ class RecipeRepositoryImpl @Inject constructor(
 
     override suspend fun addInstruction(instruction: Instruction) {
         localDataSource.addInstruction(instruction)
-    }
-
-    override suspend fun addIngredient(ingredient: Ingredient) {
-        localDataSource.addIngredient(ingredient)
-    }
-
-    override suspend fun addEquipment(equipment: Equipment) {
-        localDataSource.addEquipment(equipment)
     }
 }

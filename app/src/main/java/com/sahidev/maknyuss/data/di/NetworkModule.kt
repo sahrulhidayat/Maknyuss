@@ -36,10 +36,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNetworkClient(
+    fun provideOkHttpClient(
         @ApplicationContext appContext: Context,
         liveNetworkMonitor: NetworkState
-    ) {
+    ): OkHttpClient {
         // Create OkHttpClient with a cache directory
         val cacheSize = (50 * 1024 * 1024).toLong() // 50 MB
         val cache = Cache(File(appContext.cacheDir, "http-cache"), cacheSize)
@@ -55,21 +55,26 @@ object NetworkModule {
             okHttpClient.addInterceptor(logging)
         }
 
-        // Create Retrofit instance with OkHttpClient
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient.build())
-            .build()
-
-        retrofit.create(ApiService::class.java)
+        return okHttpClient.build()
     }
 
     @Provides
     @Singleton
-    fun provideRemoteDataSource(
-        apiService: ApiService
-    ): RemoteDataSource {
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideRemoteDataSource(apiService: ApiService): RemoteDataSource {
         return RemoteDataSource(apiService)
     }
 }

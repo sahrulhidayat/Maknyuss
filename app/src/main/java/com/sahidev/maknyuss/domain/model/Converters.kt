@@ -5,18 +5,18 @@ import com.google.gson.Gson
 
 class Converters {
     @TypeConverter
-    fun instructionsToString(
-        instructions: List<Instruction>
+    fun instructionsToEquipment(
+        equipments: List<Equipment>
     ): String {
-        return Gson().toJson(instructions)
+        return Gson().toJson(equipments)
     }
 
     @TypeConverter
     fun stringToInstructions(
         data: String
-    ): List<Instruction> {
-        val instructions = listOf<Instruction>()
-        return Gson().fromJson(data, instructions::class.java)
+    ): List<Equipment> {
+        val equipments = listOf<Equipment>()
+        return Gson().fromJson(data, equipments::class.java)
     }
 
     @TypeConverter

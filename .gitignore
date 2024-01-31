@@ -17,3 +17,4 @@
 local.properties
 /app/src/main/cpp/
 /app/src/main/java/com/sahidev/maknyuss/Secrets.kt
+/app/schemas/
