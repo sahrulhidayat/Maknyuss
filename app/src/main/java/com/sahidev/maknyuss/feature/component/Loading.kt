@@ -14,45 +14,41 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sahidev.maknyuss.feature.utils.shimmerEffect
 
 @Composable
-fun SkeletonHome() {
-    Scaffold { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-        ) {
-            LazyRow(modifier = Modifier.fillMaxWidth()) {
-                items(5) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(312f / 231f)
-                    )
-                }
+fun HomeSkeleton(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        LazyRow(modifier = Modifier.fillMaxWidth()) {
+            items(5) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(312f / 231f)
+                )
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(250.dp),
-            ) {
-                items(10) {
-                    SkeletonRecipeCard()
-                }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(250.dp),
+        ) {
+            items(10) {
+                RecipeCardSkeleton()
             }
         }
     }
 }
 
 @Composable
-fun SkeletonRecipeCard() {
+fun RecipeCardSkeleton(modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .shimmerEffect()
             .fillMaxWidth()
             .background(

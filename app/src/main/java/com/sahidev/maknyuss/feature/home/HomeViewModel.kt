@@ -21,20 +21,11 @@ class HomeViewModel @Inject constructor(
         getRandomRecipes()
     }
 
-    fun searchRecipes(query: String, offset: Int) {
-        viewModelScope.launch {
-            recipeUseCase.searchRecipe(query, offset)
-                .collect { data ->
-                    recipeState = mutableStateOf(data)
-                }
-        }
-    }
-
     private fun getRandomRecipes() {
         viewModelScope.launch {
             recipeUseCase.getRandomRecipe()
                 .collect { data ->
-                    recipeState = mutableStateOf(data)
+                    recipeState.value = data
                 }
         }
     }
