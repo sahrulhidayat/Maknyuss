@@ -7,9 +7,10 @@ import com.sahidev.maknyuss.data.source.local.dao.RecipeDao
 import com.sahidev.maknyuss.domain.model.Converters
 import com.sahidev.maknyuss.domain.model.Instruction
 import com.sahidev.maknyuss.domain.model.Recipe
+import com.sahidev.maknyuss.domain.model.Search
 
 @Database(
-    entities = [Recipe::class, Instruction::class],
+    entities = [Recipe::class, Instruction::class, Search::class],
     version = 1,
     exportSchema = true
 )

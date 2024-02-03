@@ -9,7 +9,7 @@ import com.sahidev.maknyuss.data.utils.DataMapper
 import com.sahidev.maknyuss.domain.model.Recipe
 import com.sahidev.maknyuss.domain.model.RecipeAndInstructions
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.channelFlow
 import javax.inject.Inject
 
 class RemoteDataSource @Inject constructor(
@@ -20,27 +20,27 @@ class RemoteDataSource @Inject constructor(
         query: String,
         offset: Int
     ): Flow<ApiResponse<List<Recipe>>> {
-        return flow {
+        return channelFlow {
             try {
                 val response = apiService.searchRecipe(query = query, offset = offset)
                 val results = response.results
                 if (results.isNotEmpty()) {
-                    emit(
+                    send(
                         ApiResponse.Success(
                             DataMapper.mapSearchResponseToModel(results)
                         )
                     )
                 } else {
-                    emit(ApiResponse.Empty)
+                    send(ApiResponse.Empty)
                 }
             } catch (exception: Exception) {
                 when (exception) {
                     is NoNetworkException -> {
-                        emit(ApiResponse.Error(NETWORK_ERROR_MESSAGE))
+                        send(ApiResponse.Error(NETWORK_ERROR_MESSAGE))
                     }
 
                     else -> {
-                        emit(ApiResponse.Error(exception.toString()))
+                        send(ApiResponse.Error(exception.toString()))
                         Log.e(TAG, "searchRecipe: $exception")
                     }
                 }
@@ -49,10 +49,10 @@ class RemoteDataSource @Inject constructor(
     }
 
     suspend fun getRecipeInfo(id: Int): Flow<ApiResponse<RecipeAndInstructions>> {
-        return flow {
+        return channelFlow {
             try {
                 val response = apiService.getRecipeInfo(id)
-                emit(
+                send(
                     ApiResponse.Success(
                         DataMapper.mapRecipeInfoResponseToModel(response)
                     )
@@ -60,11 +60,11 @@ class RemoteDataSource @Inject constructor(
             } catch (exception: Exception) {
                 when (exception) {
                     is NoNetworkException -> {
-                        emit(ApiResponse.Error(NETWORK_ERROR_MESSAGE))
+                        send(ApiResponse.Error(NETWORK_ERROR_MESSAGE))
                     }
 
                     else -> {
-                        emit(ApiResponse.Error(exception.toString()))
+                        send(ApiResponse.Error(exception.toString()))
                         Log.e(TAG, "getRecipeInfo: $exception")
                     }
                 }
@@ -73,27 +73,27 @@ class RemoteDataSource @Inject constructor(
     }
 
     suspend fun getRandomRecipes(): Flow<ApiResponse<List<Recipe>>> {
-        return flow {
+        return channelFlow {
             try {
                 val response = apiService.getRandomRecipes()
                 val results = response.recipes
                 if (results.isNotEmpty()) {
-                    emit(
+                    send(
                         ApiResponse.Success(
                             DataMapper.mapRecipesToModel(results)
                         )
                     )
                 } else {
-                    emit(ApiResponse.Empty)
+                    send(ApiResponse.Empty)
                 }
             } catch (exception: Exception) {
                 when (exception) {
                     is NoNetworkException -> {
-                        emit(ApiResponse.Error(NETWORK_ERROR_MESSAGE))
+                        send(ApiResponse.Error(NETWORK_ERROR_MESSAGE))
                     }
 
                     else -> {
-                        emit(ApiResponse.Error(exception.toString()))
+                        send(ApiResponse.Error(exception.toString()))
                         Log.e(TAG, "getRandomRecipes: $exception")
                     }
                 }

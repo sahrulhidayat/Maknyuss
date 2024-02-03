@@ -10,7 +10,7 @@ import com.sahidev.maknyuss.domain.model.Recipe
 import com.sahidev.maknyuss.domain.model.RecipeAndInstructions
 import com.sahidev.maknyuss.domain.repository.RecipeRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.channelFlow
 import javax.inject.Inject
 
 class RecipeRepositoryImpl @Inject constructor(
@@ -53,7 +53,7 @@ class RecipeRepositoryImpl @Inject constructor(
     override suspend fun getRandomRecipe(): Flow<Resource<List<Recipe>>> {
         return object : NetworkBoundResource<List<Recipe>>() {
             override fun loadFromDB(): Flow<List<Recipe>> {
-                return flow { emit(emptyList()) }
+                return channelFlow { send(emptyList()) }
             }
 
             override fun shouldFetch(data: List<Recipe>?): Boolean {
@@ -78,7 +78,7 @@ class RecipeRepositoryImpl @Inject constructor(
             }
 
             override suspend fun createCall(): Flow<ApiResponse<List<Recipe>>> {
-                return flow { emit(ApiResponse.Empty) }
+                return channelFlow { send(ApiResponse.Empty) }
             }
 
         }.asFlow()

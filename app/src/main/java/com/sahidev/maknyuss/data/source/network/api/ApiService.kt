@@ -14,16 +14,14 @@ import retrofit2.http.Query
 
 private val API_KEY = Secrets().getApiKey(BuildConfig.APPLICATION_ID)
 interface ApiService {
-    @Headers("$CACHE_CONTROL_HEADER: $NO_CACHE")
     @GET("recipes/complexSearch")
     suspend fun searchRecipe(
         @Query("query") query: String,
-        @Query("number") offset: Int = 0,
+        @Query("offset") offset: Int = 0,
         @Query("number") number: Int = 10,
         @Query("apiKey") apiKey: String = API_KEY,
     ): SearchResponse
 
-    @Headers("$CACHE_CONTROL_HEADER: $NO_CACHE")
     @GET("recipes/{id}/information")
     suspend fun getRecipeInfo(
         @Path("id") id: Int,
@@ -31,7 +29,6 @@ interface ApiService {
         @Query("apiKey") apiKey: String = API_KEY,
     ): RecipeInfoResponse
 
-    @Headers("$CACHE_CONTROL_HEADER: $NO_CACHE")
     @GET("recipes/random")
     suspend fun getRandomRecipes(
         @Query("number") number: Int = 10,

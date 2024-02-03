@@ -44,9 +44,9 @@ object NetworkModule {
         val cacheSize = (50 * 1024 * 1024).toLong() // 50 MB
         val cache = Cache(File(appContext.cacheDir, "http-cache"), cacheSize)
         val okHttpClient = OkHttpClient.Builder()
+            .cache(cache)
             .addNetworkInterceptor(CacheInterceptor())
             .addInterceptor(NetworkMonitorInterceptor(liveNetworkMonitor))
-            .cache(cache)
             .connectTimeout(120, TimeUnit.SECONDS)
             .readTimeout(120, TimeUnit.SECONDS)
 
