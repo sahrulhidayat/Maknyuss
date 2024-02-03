@@ -12,7 +12,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
-fun Modifier.shimmerEffect(targetValue: Float = 1000f): Modifier = composed {
+fun Modifier.shimmerEffect(durationMillis: Int = 1500): Modifier = composed {
     val shimmerColors = listOf(
         Color.LightGray.copy(alpha = 0.6f),
         Color.LightGray.copy(alpha = 0.2f),
@@ -22,9 +22,9 @@ fun Modifier.shimmerEffect(targetValue: Float = 1000f): Modifier = composed {
     val transition = rememberInfiniteTransition(label = "Shimmer effect")
     val translateAnimation = transition.animateFloat(
         initialValue = 0f,
-        targetValue = targetValue,
+        targetValue = 2000f,
         animationSpec = infiniteRepeatable(
-            animation = tween(800), repeatMode = RepeatMode.Reverse
+            animation = tween(durationMillis), repeatMode = RepeatMode.Restart
         ),
         label = "Shimmer effect"
     )

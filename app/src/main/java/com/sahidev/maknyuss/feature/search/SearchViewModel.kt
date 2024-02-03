@@ -1,4 +1,4 @@
-package com.sahidev.maknyuss.feature.home
+package com.sahidev.maknyuss.feature.search
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -11,28 +11,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class SearchViewModel @Inject constructor(
     private val recipeUseCase: RecipeUseCase
 ) : ViewModel() {
     var recipeState = mutableStateOf<Resource<List<Recipe>>>(Resource.Loading())
         private set
 
-    init {
-        getRandomRecipes()
-    }
-
     fun searchRecipes(query: String, offset: Int) {
         viewModelScope.launch {
             recipeUseCase.searchRecipe(query, offset)
-                .collect { data ->
-                    recipeState.value = data
-                }
-        }
-    }
-
-    private fun getRandomRecipes() {
-        viewModelScope.launch {
-            recipeUseCase.getRandomRecipe()
                 .collect { data ->
                     recipeState.value = data
                 }
