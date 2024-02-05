@@ -127,6 +127,9 @@ object DataMapper {
         old imageUrl = "https://spoonacular.com/recipeImages/656329-556x370.jpg"
         new imageUrl = "https://spoonacular.com/recipeImages/656329-312x231.jpg"
         */
-        return url.dropLast(11).plus("${aspectRatio}.jpg")
+        val start = url.length - 11
+        val end = url.length - 4
+
+        return  url.replaceRange(start, end, aspectRatio)
     }
 }
