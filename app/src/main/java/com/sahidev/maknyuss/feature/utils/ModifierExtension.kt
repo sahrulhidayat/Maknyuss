@@ -14,9 +14,9 @@ import androidx.compose.ui.graphics.Color
 
 fun Modifier.shimmerEffect(durationMillis: Int = 1500): Modifier = composed {
     val shimmerColors = listOf(
-        Color.LightGray.copy(alpha = 0.6f),
-        Color.LightGray.copy(alpha = 0.2f),
-        Color.LightGray.copy(alpha = 0.6f),
+        Color(0xFFCCCCCC),
+        Color(0xFFD8D8D8),
+        Color(0xFFCCCCCC),
     )
 
     val transition = rememberInfiniteTransition(label = "Shimmer effect")
@@ -32,7 +32,7 @@ fun Modifier.shimmerEffect(durationMillis: Int = 1500): Modifier = composed {
     background(
         brush = Brush.linearGradient(
             colors = shimmerColors,
-            start = Offset.Zero,
+            start = Offset(x = translateAnimation.value - 500f, y = translateAnimation.value - 500f),
             end = Offset(x = translateAnimation.value, y = translateAnimation.value)
         )
     )

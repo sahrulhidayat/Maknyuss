@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 @Entity
 data class Search(
     @PrimaryKey
-    val id: Int? = null,
-    val history: String,
+    val query: String,
+    val timestamp: Long,
 )

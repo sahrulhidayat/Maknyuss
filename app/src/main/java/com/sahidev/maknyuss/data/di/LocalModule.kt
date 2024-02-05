@@ -32,6 +32,7 @@ object LocalModule {
     fun provideLocalDataSource(db: RecipeDatabase): LocalDataSource {
         return LocalDataSource(
             db.recipeDao,
+            db.searchDao,
         )
     }
 }

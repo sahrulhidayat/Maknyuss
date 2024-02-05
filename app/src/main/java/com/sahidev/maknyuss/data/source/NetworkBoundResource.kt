@@ -19,7 +19,7 @@ abstract class NetworkBoundResource<ResultType> {
                     emit(Resource.Success(apiResponse.data))
                 }
                 is ApiResponse.Empty -> {
-                    return@flow
+                    emit(Resource.Error("No Result"))
                 }
                 is ApiResponse.Error -> {
                     emit(Resource.Error(apiResponse.errorMessage))

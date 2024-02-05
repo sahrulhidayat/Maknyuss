@@ -21,7 +21,7 @@ class RecipeRepositoryImpl @Inject constructor(
     override fun searchRecipe(query: String, offset: Int): Flow<Resource<List<Recipe>>> {
         return object : NetworkBoundResource<List<Recipe>>() {
             override fun loadFromDB(): Flow<List<Recipe>> {
-                return localDataSource.searchRecipe(query)
+                return channelFlow { send(emptyList()) }
             }
 
             override fun shouldFetch(data: List<Recipe>?): Boolean {
@@ -32,6 +32,10 @@ class RecipeRepositoryImpl @Inject constructor(
                 return remoteDataSource.searchRecipe(query, offset)
             }
         }.asFlow()
+    }
+
+    override suspend fun checkRecipe(id: Int): Boolean {
+        return localDataSource.checkRecipe(id)
     }
 
     override suspend fun getRecipeInfo(id: Int): Flow<Resource<RecipeAndInstructions>> {

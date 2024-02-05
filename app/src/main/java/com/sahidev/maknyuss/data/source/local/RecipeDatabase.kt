@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.sahidev.maknyuss.data.source.local.dao.RecipeDao
+import com.sahidev.maknyuss.data.source.local.dao.SearchDao
 import com.sahidev.maknyuss.domain.model.Converters
 import com.sahidev.maknyuss.domain.model.Instruction
 import com.sahidev.maknyuss.domain.model.Recipe
@@ -18,6 +19,7 @@ import com.sahidev.maknyuss.domain.model.Search
 abstract class RecipeDatabase : RoomDatabase() {
 
     abstract val recipeDao: RecipeDao
+    abstract val searchDao: SearchDao
 
     companion object {
         const val DATABASE_NAME = "recipe_db"

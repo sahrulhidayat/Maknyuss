@@ -1,5 +1,6 @@
 package com.sahidev.maknyuss.feature.home
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,10 +29,10 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -45,6 +46,7 @@ import com.sahidev.maknyuss.feature.component.HomeError
 import com.sahidev.maknyuss.feature.component.HomeSkeleton
 import com.sahidev.maknyuss.feature.component.ImageSlide
 import com.sahidev.maknyuss.feature.component.RecipeCard
+import com.sahidev.maknyuss.feature.component.SearchSkeleton
 import com.sahidev.maknyuss.ui.theme.MaknyussTheme
 import com.sahidev.maknyuss.ui.theme.backgroundLight
 
@@ -53,17 +55,19 @@ import com.sahidev.maknyuss.ui.theme.backgroundLight
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    val searchHistory = viewModel.searchHistory.value
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
-    val search = remember {
-        mutableStateListOf(
-            "Healthy breakfast",
-            "Chicken dinner"
-        )
-    }
+    var showingSearch by remember { mutableStateOf(false) }
 
     var maxWidth by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
+
+    BackHandler {
+        if (showingSearch) {
+            showingSearch = false
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -81,7 +85,8 @@ fun HomeScreen(
                     query = query,
                     onQueryChange = { query = it },
                     onSearch = {
-                        search.add(it)
+                        showingSearch = true
+                        viewModel.onEvent(HomeEvent.SearchRecipe(it))
                         active = false
                     },
                     active = active,
@@ -116,21 +121,22 @@ fun HomeScreen(
                         }
                     },
                     modifier = Modifier
-                        .padding(bottom = 10.dp)
+                        .padding(bottom = 8.dp)
                         .defaultMinSize(minWidth = maxWidth - 20.dp)
                 ) {
-                    search.forEach {
+                    searchHistory.forEach {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(14.dp)
+                                .padding(horizontal = 14.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
                                 imageVector = Icons.Default.History,
                                 contentDescription = "History icon"
                             )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Text(text = it)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = it.query)
                         }
                     }
                 }
@@ -146,17 +152,33 @@ fun HomeScreen(
             }
 
             is Resource.Loading -> {
-                HomeSkeleton(
-                    modifier = Modifier
-                        .padding(padding)
-                        .fillMaxSize(),
-                )
+                if (showingSearch) {
+                    SearchSkeleton(
+                        modifier = Modifier
+                            .padding(padding)
+                            .fillMaxSize(),
+                    )
+                } else {
+                    HomeSkeleton(
+                        modifier = Modifier
+                            .padding(padding)
+                            .fillMaxSize(),
+                    )
+                }
             }
 
             is Resource.Success -> {
-                val data = recipeState.data
-                if (data != null) {
-                    RecipeGrid(
+                val data = recipeState.data ?: emptyList()
+
+                if (showingSearch) {
+                    SearchGrid(
+                        modifier = Modifier
+                            .padding(padding)
+                            .fillMaxSize(),
+                        data = data
+                    )
+                } else {
+                    HomeGrid(
                         modifier = Modifier
                             .padding(padding)
                             .fillMaxSize(),
@@ -169,7 +191,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun RecipeGrid(modifier: Modifier = Modifier, data: List<Recipe>) {
+fun HomeGrid(modifier: Modifier = Modifier, data: List<Recipe>) {
     LazyVerticalGrid(
         modifier = modifier.background(backgroundLight),
         columns = GridCells.Adaptive(150.dp),
@@ -188,6 +210,19 @@ fun RecipeGrid(modifier: Modifier = Modifier, data: List<Recipe>) {
     }
 }
 
+@Composable
+fun SearchGrid(modifier: Modifier = Modifier, data: List<Recipe>) {
+    LazyVerticalGrid(
+        modifier = modifier.background(backgroundLight),
+        columns = GridCells.Adaptive(150.dp),
+        contentPadding = PaddingValues(8.dp)
+    ) {
+        items(data) { recipe ->
+            RecipeCard(recipe = recipe)
+        }
+    }
+}
+
 @Preview
 @Composable
 fun Preview() {
@@ -198,7 +233,7 @@ fun Preview() {
         )
 
         MaknyussTheme {
-            RecipeGrid(data = recipes)
+            HomeGrid(data = recipes)
         }
     }
 }

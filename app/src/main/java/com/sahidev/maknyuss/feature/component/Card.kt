@@ -3,6 +3,7 @@ package com.sahidev.maknyuss.feature.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,6 +32,9 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe) {
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
+                modifier = Modifier
+                    .aspectRatio(312f / 231f)
+                    .fillMaxSize(),
                 model = recipe.image,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,

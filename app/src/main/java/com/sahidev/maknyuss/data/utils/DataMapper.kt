@@ -17,10 +17,11 @@ object DataMapper {
 
     fun mapSearchResponseToModel(input: List<ResultsItem>): List<Recipe> {
         return input.map {
+            val image = modifyImageUrl(it.image)
             Recipe(
                 it.id,
                 it.title,
-                it.image,
+                image,
             )
         }
     }
@@ -111,11 +112,21 @@ object DataMapper {
 
     fun mapRecipesToModel(input: List<RecipesItem>): List<Recipe> {
         return input.map {
+            val image = modifyImageUrl(it.image)
             Recipe(
                 it.id,
                 it.title,
-                it.image
+                image
             )
         }
+    }
+
+    private fun modifyImageUrl(url: String, aspectRatio: String = "312x231"): String {
+        /*
+        Change the aspect ratio of the requested image by changing the last url parameter. example :
+        old imageUrl = "https://spoonacular.com/recipeImages/656329-556x370.jpg"
+        new imageUrl = "https://spoonacular.com/recipeImages/656329-312x231.jpg"
+        */
+        return url.dropLast(11).plus("${aspectRatio}.jpg")
     }
 }
