@@ -2,15 +2,11 @@ package com.sahidev.maknyuss.feature.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -27,7 +23,9 @@ import com.sahidev.maknyuss.domain.model.Recipe
 @Composable
 fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe) {
     Card(
-        modifier = modifier.height(200.dp).padding(3.dp),
+        modifier = modifier
+            .height(200.dp)
+            .padding(3.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {

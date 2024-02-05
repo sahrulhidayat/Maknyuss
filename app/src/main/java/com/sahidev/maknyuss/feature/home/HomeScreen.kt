@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -58,14 +58,14 @@ fun HomeScreen(
     val searchHistory = viewModel.searchHistory.value
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
-    var showingSearch by remember { mutableStateOf(false) }
+    var showingSearchResult by remember { mutableStateOf(false) }
 
     var maxWidth by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
 
     BackHandler {
-        if (showingSearch) {
-            showingSearch = false
+        if (showingSearchResult) {
+            showingSearchResult = false
         }
     }
 
@@ -85,13 +85,13 @@ fun HomeScreen(
                     query = query,
                     onQueryChange = { query = it },
                     onSearch = {
-                        showingSearch = true
+                        showingSearchResult = true
                         viewModel.onEvent(HomeEvent.SearchRecipe(it))
                         active = false
                     },
                     active = active,
                     onActiveChange = { active = it },
-                    placeholder = { Text(text = "Search") },
+                    placeholder = { Text(text = "Search Recipe") },
                     leadingIcon = {
                         if (active) {
                             IconButton(
@@ -111,32 +111,49 @@ fun HomeScreen(
                     },
                     trailingIcon = {
                         if (active && query.isNotEmpty()) {
-                            Icon(
-                                modifier = Modifier.clickable {
-                                    query = ""
-                                },
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Close icon"
-                            )
+                            IconButton(onClick = { query = "" }) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Close icon"
+                                )
+                            }
                         }
                     },
                     modifier = Modifier
                         .padding(bottom = 8.dp)
-                        .defaultMinSize(minWidth = maxWidth - 20.dp)
+                        .sizeIn(minWidth = maxWidth - 20.dp)
                 ) {
                     searchHistory.forEach {
                         Row(
                             modifier = Modifier
+                                .clickable {
+                                    viewModel.onEvent(HomeEvent.SearchRecipe(it.query))
+                                    query = it.query
+                                    showingSearchResult = true
+                                    active = false
+                                }
                                 .fillMaxWidth()
-                                .padding(horizontal = 14.dp, vertical = 8.dp),
+                                .padding(horizontal = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
+                                modifier = Modifier.padding(8.dp),
                                 imageVector = Icons.Default.History,
                                 contentDescription = "History icon"
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(text = it.query)
+                            Spacer(modifier = Modifier.weight(1f))
+                            IconButton(
+                                onClick = {
+                                    viewModel.onEvent(HomeEvent.DeleteSearchHistory(it.query))
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Delete history"
+                                )
+                            }
                         }
                     }
                 }
@@ -152,7 +169,7 @@ fun HomeScreen(
             }
 
             is Resource.Loading -> {
-                if (showingSearch) {
+                if (showingSearchResult) {
                     SearchSkeleton(
                         modifier = Modifier
                             .padding(padding)
@@ -170,7 +187,7 @@ fun HomeScreen(
             is Resource.Success -> {
                 val data = recipeState.data ?: emptyList()
 
-                if (showingSearch) {
+                if (showingSearchResult) {
                     SearchGrid(
                         modifier = Modifier
                             .padding(padding)
