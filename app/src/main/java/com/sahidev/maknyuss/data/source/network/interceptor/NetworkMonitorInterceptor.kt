@@ -2,7 +2,7 @@ package com.sahidev.maknyuss.data.source.network.interceptor
 
 import com.sahidev.maknyuss.data.source.network.monitor.NetworkState
 import com.sahidev.maknyuss.data.source.network.monitor.NoNetworkException
-import com.sahidev.maknyuss.data.utils.Constants.NETWORK_ERROR_MESSAGE
+import com.sahidev.maknyuss.data.utils.Constant.NETWORK_ERROR_MESSAGE
 import okhttp3.CacheControl
 import okhttp3.Interceptor
 import okhttp3.Request

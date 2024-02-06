@@ -39,7 +39,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sahidev.maknyuss.data.utils.Constants.DEFAULT_ERROR_MESSAGE
+import com.sahidev.maknyuss.data.utils.Constant.DEFAULT_ERROR_MESSAGE
 import com.sahidev.maknyuss.domain.Resource
 import com.sahidev.maknyuss.domain.model.Recipe
 import com.sahidev.maknyuss.feature.component.HomeError
@@ -53,6 +53,7 @@ import com.sahidev.maknyuss.ui.theme.backgroundLight
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    onClickItem: (id: Int) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val searchHistory = viewModel.searchHistory.value

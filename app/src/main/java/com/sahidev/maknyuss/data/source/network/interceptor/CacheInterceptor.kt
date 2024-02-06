@@ -1,6 +1,6 @@
 package com.sahidev.maknyuss.data.source.network.interceptor
 
-import com.sahidev.maknyuss.data.utils.Constants.CACHE_CONTROL_HEADER
+import com.sahidev.maknyuss.data.utils.Constant.CACHE_CONTROL_HEADER
 import okhttp3.CacheControl
 import okhttp3.Interceptor
 import okhttp3.Response

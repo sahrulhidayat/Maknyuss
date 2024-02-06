@@ -5,10 +5,7 @@ import com.sahidev.maknyuss.Secrets
 import com.sahidev.maknyuss.data.source.network.response.RecipeInfoResponse
 import com.sahidev.maknyuss.data.source.network.response.RecipesResponse
 import com.sahidev.maknyuss.data.source.network.response.SearchResponse
-import com.sahidev.maknyuss.data.utils.Constants.CACHE_CONTROL_HEADER
-import com.sahidev.maknyuss.data.utils.Constants.NO_CACHE
 import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.http.Path
 import retrofit2.http.Query
 

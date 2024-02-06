@@ -1,6 +1,6 @@
 package com.sahidev.maknyuss.data.utils
 
-object Constants {
+object Constant {
     const val CACHE_CONTROL_HEADER = "Cache-Control"
     const val NO_CACHE = "no-cache"
 
