@@ -30,13 +30,13 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe) {
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
-                modifier = Modifier
-                    .aspectRatio(312f / 231f)
-                    .fillMaxSize(),
                 model = recipe.image,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                alignment = Alignment.TopCenter
+                alignment = Alignment.TopCenter,
+                modifier = Modifier
+                    .aspectRatio(312f / 231f)
+                    .fillMaxSize()
             )
             Box(
                 modifier = modifier

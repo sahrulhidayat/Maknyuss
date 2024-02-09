@@ -10,7 +10,7 @@ const val RECIPE_ID = "recipeId"
 
 fun NavGraphBuilder.infoScreen() {
     composable(
-        route = INFO_ROUTE,
+        route = "$INFO_ROUTE/{$RECIPE_ID}",
         arguments = listOf(
             navArgument(RECIPE_ID) { type = NavType.IntType }
         )

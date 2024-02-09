@@ -67,6 +67,7 @@ fun HomeScreen(
     BackHandler {
         if (showingSearchResult) {
             showingSearchResult = false
+            viewModel.getRandomRecipes()
         }
     }
 
@@ -197,10 +198,11 @@ fun HomeScreen(
                     )
                 } else {
                     HomeGrid(
+                        data = data,
                         modifier = Modifier
                             .padding(padding)
                             .fillMaxSize(),
-                        data = data
+                        onClickItem = onClickItem
                     )
                 }
             }
@@ -209,7 +211,11 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeGrid(modifier: Modifier = Modifier, data: List<Recipe>) {
+fun HomeGrid(
+    data: List<Recipe>,
+    modifier: Modifier = Modifier,
+    onClickItem: (id: Int) -> Unit
+) {
     LazyVerticalGrid(
         modifier = modifier.background(backgroundLight),
         columns = GridCells.Adaptive(150.dp),
@@ -223,7 +229,10 @@ fun HomeGrid(modifier: Modifier = Modifier, data: List<Recipe>) {
             ImageSlide(data = data)
         }
         items(data) { recipe ->
-            RecipeCard(recipe = recipe)
+            RecipeCard(
+                modifier = Modifier.clickable { onClickItem(recipe.id) },
+                recipe = recipe
+            )
         }
     }
 }
@@ -251,7 +260,7 @@ fun Preview() {
         )
 
         MaknyussTheme {
-            HomeGrid(data = recipes)
+            HomeGrid(data = recipes, onClickItem = {})
         }
     }
 }

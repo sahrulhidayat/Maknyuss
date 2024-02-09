@@ -59,7 +59,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun getRandomRecipes() {
+    fun getRandomRecipes() {
         viewModelScope.launch {
             recipeUseCase.getRandomRecipe()
                 .collect { data ->
