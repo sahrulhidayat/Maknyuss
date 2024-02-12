@@ -1,5 +1,6 @@
 package com.sahidev.maknyuss.feature.info
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,10 +24,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Recommend
 import androidx.compose.material.icons.filled.Stars
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -36,9 +40,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -205,7 +209,7 @@ fun InfoColumn(data: RecipeAndInstructions, modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(text = "Bon Appetit")
+                Text(text = "Bon Appetit \uD83D\uDC4C")
             }
             Spacer(modifier = Modifier.height(10.dp))
         }
@@ -216,30 +220,49 @@ fun InfoColumn(data: RecipeAndInstructions, modifier: Modifier = Modifier) {
 fun InstructionCard(instruction: Instruction, modifier: Modifier = Modifier) {
     val showEquipmentAndIngredient = remember { mutableStateOf(false) }
 
-    Card(modifier = modifier
-        .padding(horizontal = 8.dp, vertical = 4.dp)
-        .clickable {
-            showEquipmentAndIngredient.value = !showEquipmentAndIngredient.value
-        }
+    Card(
+        modifier = modifier
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .clickable {
+                showEquipmentAndIngredient.value = !showEquipmentAndIngredient.value
+            },
+        shape = RoundedCornerShape(8.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
     ) {
-        Row(
-            modifier = modifier.padding(4.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = modifier
+                .padding(4.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = instruction.number.toString())
-            Spacer(modifier = Modifier.width(4.dp))
-            Column(modifier = modifier.fillMaxWidth()) {
-                Text(
-                    text = instruction.step,
-                    style = MaterialTheme.typography.bodyMedium
+            Text(
+                text = "Step: ${instruction.number}",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(modifier = Modifier.size(4.dp))
+            Text(
+                text = instruction.step,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+            if (showEquipmentAndIngredient.value) {
+                Spacer(modifier = Modifier.size(4.dp))
+                EquipmentAndIngredient(
+                    instruction.ingredients,
+                    instruction.equipments
                 )
-                Spacer(modifier = Modifier.width(4.dp))
-                if (showEquipmentAndIngredient.value) {
-                    EquipmentAndIngredient(
-                        instruction.ingredients,
-                        instruction.equipments
-                    )
-                }
+                Icon(
+                    modifier = Modifier.padding(4.dp),
+                    imageVector = Icons.Default.ExpandLess,
+                    contentDescription = "Expand less"
+                )
+            } else {
+                Icon(
+                    modifier = Modifier.padding(4.dp),
+                    imageVector = Icons.Default.ExpandMore,
+                    contentDescription = "Expand more"
+                )
             }
         }
     }
@@ -254,22 +277,34 @@ fun EquipmentAndIngredient(
 ) {
     Column(
         modifier = modifier
+            .padding(top = 4.dp)
             .fillMaxWidth()
-            .wrapContentHeight()
+            .wrapContentHeight(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (ingredients.isNotEmpty()) {
             Text(
-                text = "Used ingredients:",
+                text = "Ingredients:",
                 style = MaterialTheme.typography.titleSmall
             )
+            Spacer(modifier = Modifier.size(2.dp))
             FlowRow {
                 ingredients.forEach { ingredient ->
-                    Column {
-                        AsyncImage(
-                            model = ingredient.image,
-                            contentDescription = null,
-                            modifier = Modifier.clip(RoundedCornerShape(8.dp))
-                        )
+                    Column(
+                        modifier = Modifier.padding(2.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(
+                            modifier = Modifier.size(70.dp)
+                        ) {
+                            AsyncImage(
+                                model = ingredient.image,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .aspectRatio(70f / 70f)
+                                    .fillMaxSize()
+                            )
+                        }
                         Text(
                             text = ingredient.name,
                             style = MaterialTheme.typography.bodySmall
@@ -279,18 +314,29 @@ fun EquipmentAndIngredient(
             }
         }
         if (equipments.isNotEmpty()) {
+            Spacer(modifier = Modifier.size(4.dp))
             Text(
-                text = "Used equipments:",
+                text = "Equipments:",
                 style = MaterialTheme.typography.titleSmall
             )
+            Spacer(modifier = Modifier.size(2.dp))
             FlowRow {
                 equipments.forEach { equipment ->
-                    Column {
-                        AsyncImage(
-                            model = equipment.image,
-                            contentDescription = null,
-                            modifier = Modifier.clip(RoundedCornerShape(8.dp))
-                        )
+                    Column(
+                        modifier = Modifier.padding(2.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(
+                            modifier = Modifier.size(70.dp)
+                        ) {
+                            AsyncImage(
+                                model = equipment.image,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .aspectRatio(70f / 70f)
+                                    .fillMaxSize()
+                            )
+                        }
                         Text(
                             text = equipment.name,
                             style = MaterialTheme.typography.bodySmall

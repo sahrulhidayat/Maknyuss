@@ -66,7 +66,7 @@ object DataMapper {
         return input.map {
             Ingredient(
                 it.name,
-                it.image,
+                ingredientImage(it.image),
                 it.nameClean,
                 "${it.measures.us.unitShort} (${it.measures.metric.unitShort})"
             )
@@ -94,7 +94,7 @@ object DataMapper {
         return input.map {
             Equipment(
                 it.name,
-                it.image
+                equipmentImage(it.image)
             )
         }
     }
@@ -105,7 +105,7 @@ object DataMapper {
         return input.map {
             Ingredient(
                 it.name,
-                it.image
+                ingredientImage(it.image)
             )
         }
     }
@@ -131,5 +131,14 @@ object DataMapper {
         val end = url.length - 4
 
         return  url.replaceRange(start, end, aspectRatio)
+    }
+
+    private fun ingredientImage(ingredient: String, size: String = "100x100"): String {
+
+        return "https://spoonacular.com/cdn/ingredients_${size}/${ingredient.ifEmpty { "ingredient.jpg" }}"
+    }
+
+    private fun equipmentImage(equipment: String, size: String = "100x100"): String {
+        return "https://spoonacular.com/cdn/equipment_${size}/${equipment.ifEmpty { "equipment.jpg"}}"
     }
 }
