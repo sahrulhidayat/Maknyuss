@@ -21,6 +21,8 @@ class HomeViewModel @Inject constructor(
         private set
     var searchHistory = mutableStateOf<List<Search>>(emptyList())
         private set
+    var showingSearchResult = mutableStateOf(false)
+        private set
 
     init {
         getRandomRecipes()
@@ -51,11 +53,16 @@ class HomeViewModel @Inject constructor(
                 }
             }
 
+            is HomeEvent.ShowingSearchResult -> {
+                showingSearchResult.value = event.value
+            }
+
             HomeEvent.ClearSearchHistory -> {
                 viewModelScope.launch {
                     searchUseCase.clearSearchHistory()
                 }
             }
+
         }
     }
 
@@ -81,5 +88,6 @@ class HomeViewModel @Inject constructor(
 sealed class HomeEvent {
     data class SearchRecipe(val query: String, val offset: Int = 0) : HomeEvent()
     data class DeleteSearchHistory(val query: String) : HomeEvent()
+    data class ShowingSearchResult(val value: Boolean) : HomeEvent()
     data object ClearSearchHistory : HomeEvent()
 }

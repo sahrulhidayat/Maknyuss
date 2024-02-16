@@ -57,16 +57,16 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val searchHistory = viewModel.searchHistory.value
+    val showingSearchResult  = viewModel.showingSearchResult.value
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
-    var showingSearchResult by remember { mutableStateOf(false) }
 
     var maxWidth by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
 
     BackHandler {
         if (showingSearchResult) {
-            showingSearchResult = false
+            viewModel.onEvent(HomeEvent.ShowingSearchResult(false))
             viewModel.getRandomRecipes()
         }
     }
@@ -87,7 +87,7 @@ fun HomeScreen(
                     query = query,
                     onQueryChange = { query = it },
                     onSearch = {
-                        showingSearchResult = true
+                        viewModel.onEvent(HomeEvent.ShowingSearchResult(true))
                         viewModel.onEvent(HomeEvent.SearchRecipe(it))
                         active = false
                     },
@@ -131,7 +131,7 @@ fun HomeScreen(
                                 .clickable {
                                     viewModel.onEvent(HomeEvent.SearchRecipe(it.query))
                                     query = it.query
-                                    showingSearchResult = true
+                                    viewModel.onEvent(HomeEvent.ShowingSearchResult(true))
                                     active = false
                                 }
                                 .fillMaxWidth()
@@ -144,8 +144,10 @@ fun HomeScreen(
                                 contentDescription = "History icon"
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = it.query)
-                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = it.query,
+                                modifier = Modifier.weight(1f)
+                            )
                             IconButton(
                                 onClick = {
                                     viewModel.onEvent(HomeEvent.DeleteSearchHistory(it.query))
@@ -191,18 +193,20 @@ fun HomeScreen(
 
                 if (showingSearchResult) {
                     SearchGrid(
+                        data = data,
+                        onClickItem = onClickItem,
                         modifier = Modifier
                             .padding(padding)
                             .fillMaxSize(),
-                        data = data
+
                     )
                 } else {
                     HomeGrid(
                         data = data,
+                        onClickItem = onClickItem,
                         modifier = Modifier
                             .padding(padding)
-                            .fillMaxSize(),
-                        onClickItem = onClickItem
+                            .fillMaxSize()
                     )
                 }
             }
@@ -226,26 +230,36 @@ fun HomeGrid(
                 GridItemSpan(maxCurrentLineSpan)
             }
         ) {
-            ImageSlide(data = data)
+            ImageSlide(
+                data = data,
+                onClick = { id -> onClickItem(id) }
+            )
         }
         items(data) { recipe ->
             RecipeCard(
-                modifier = Modifier.clickable { onClickItem(recipe.id) },
-                recipe = recipe
+                recipe = recipe,
+                modifier = Modifier.clickable { onClickItem(recipe.id) }
             )
         }
     }
 }
 
 @Composable
-fun SearchGrid(modifier: Modifier = Modifier, data: List<Recipe>) {
+fun SearchGrid(
+    data: List<Recipe>,
+    onClickItem: (id: Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
     LazyVerticalGrid(
         modifier = modifier.background(backgroundLight),
         columns = GridCells.Adaptive(150.dp),
         contentPadding = PaddingValues(8.dp)
     ) {
         items(data) { recipe ->
-            RecipeCard(recipe = recipe)
+            RecipeCard(
+                recipe = recipe,
+                modifier = Modifier.clickable { onClickItem(recipe.id) }
+            )
         }
     }
 }

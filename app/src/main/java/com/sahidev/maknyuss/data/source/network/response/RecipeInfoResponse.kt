@@ -11,7 +11,7 @@ data class RecipeInfoResponse(
 	val title: String,
 
 	@field:SerializedName("image")
-	val image: String,
+	val image: String?,
 
 	@field:SerializedName("summary")
 	val summary: String,
@@ -22,26 +22,11 @@ data class RecipeInfoResponse(
 	@field:SerializedName("aggregateLikes")
 	val likes: Int,
 
-	@field:SerializedName("veryPopular")
-	val veryPopular: Boolean,
-
-	@field:SerializedName("veryHealthy")
-	val veryHealthy: Boolean,
-
 	@field:SerializedName("readyInMinutes")
 	val readyMinutes: Int,
 
 	@field:SerializedName("servings")
 	val servings: Int,
-
-	@field:SerializedName("cuisines")
-	val cuisines: List<String>,
-
-	@field:SerializedName("dishTypes")
-	val dishTypes: List<String>,
-
-	@field:SerializedName("sourceName")
-	val source: String,
 
 	@field:SerializedName("extendedIngredients")
 	val extendedIngredients: List<ExtendedIngredientsItem>,
@@ -116,7 +101,7 @@ data class Measures(
 data class Metric(
 
 	@field:SerializedName("amount")
-	val amount: Any,
+	val amount: Double,
 
 	@field:SerializedName("unitShort")
 	val unitShort: String,
@@ -125,7 +110,7 @@ data class Metric(
 data class Us(
 
 	@field:SerializedName("amount")
-	val amount: Any,
+	val amount: Double,
 
 	@field:SerializedName("unitShort")
 	val unitShort: String,

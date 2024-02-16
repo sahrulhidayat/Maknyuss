@@ -12,16 +12,16 @@ import com.sahidev.maknyuss.domain.model.Ingredient
 import com.sahidev.maknyuss.domain.model.Instruction
 import com.sahidev.maknyuss.domain.model.Recipe
 import com.sahidev.maknyuss.domain.model.RecipeAndInstructions
+import java.math.RoundingMode
 
 object DataMapper {
 
     fun mapSearchResponseToModel(input: List<ResultsItem>): List<Recipe> {
         return input.map {
-            val image = modifyImageUrl(it.image)
             Recipe(
                 it.id,
                 it.title,
-                image,
+                it.image ?: "https://spoonacular.com/recipeImages/${it.id}-556x370.jpg",
             )
         }
     }
@@ -33,23 +33,34 @@ object DataMapper {
             input.analyzedInstructions
         )
         instructions.forEach { instruction ->
-            instruction.equipments.forEach { equipments.add(it) }
+            instruction.equipments.forEach {
+                if (!equipments.contains(it)) {
+                    equipments.add(it)
+                }
+            }
         }
+        val priceInDollars = (input.price / 100)
+            .toBigDecimal()
+            .setScale(2, RoundingMode.UP)
+            .toDouble()
+
+        val summary = input.summary
+            .dropLast(1)
+            .replaceAfterLast(". ", "")
+            .dropLast(1)
+            .replaceAfterLast(". ", "")
+            .dropLast(1)
+            .replaceAfterLast(". ", "")
 
         val recipe = Recipe(
             input.id,
             input.title,
-            input.image,
-            input.summary,
-            input.price.toString(),
+            input.image ?: "https://spoonacular.com/recipeImages/${input.id}-556x370.jpg",
+            summary,
+            priceInDollars.toString(),
             input.likes.toString(),
-            input.veryPopular,
-            input.veryHealthy,
             input.readyMinutes,
             input.servings,
-            input.cuisines.joinToString(separator = ", "),
-            input.dishTypes.joinToString(separator = ", "),
-            input.source,
             equipments,
             mapExtendedIngredients(input.extendedIngredients)
         )
@@ -64,11 +75,15 @@ object DataMapper {
         input: List<ExtendedIngredientsItem>
     ): List<Ingredient> {
         return input.map {
+            val amount = it.measures.metric.amount.toString()
+            val unit = it.measures.metric.unitShort
+            val measures = "${amount.trimTrailingZero()} $unit"
+
             Ingredient(
-                it.name,
+                it.name.capitalize(),
                 ingredientImage(it.image),
                 it.nameClean,
-                "${it.measures.us.unitShort} (${it.measures.metric.unitShort})"
+                measures
             )
         }
     }
@@ -93,7 +108,7 @@ object DataMapper {
     ): List<Equipment> {
         return input.map {
             Equipment(
-                it.name,
+                it.name.capitalize(),
                 equipmentImage(it.image)
             )
         }
@@ -104,7 +119,7 @@ object DataMapper {
     ): List<Ingredient> {
         return input.map {
             Ingredient(
-                it.name,
+                it.name.capitalize(),
                 ingredientImage(it.image)
             )
         }
@@ -112,25 +127,12 @@ object DataMapper {
 
     fun mapRecipesToModel(input: List<RecipesItem>): List<Recipe> {
         return input.map {
-            val image = modifyImageUrl(it.image)
             Recipe(
                 it.id,
                 it.title,
-                image
+                it.image ?: "https://spoonacular.com/recipeImages/${it.id}-556x370.jpg"
             )
         }
-    }
-
-    private fun modifyImageUrl(url: String, aspectRatio: String = "312x231"): String {
-        /*
-        Change the aspect ratio of the requested image by changing the last url parameter. example :
-        old imageUrl = "https://spoonacular.com/recipeImages/656329-556x370.jpg"
-        new imageUrl = "https://spoonacular.com/recipeImages/656329-312x231.jpg"
-        */
-        val start = url.length - 11
-        val end = url.length - 4
-
-        return  url.replaceRange(start, end, aspectRatio)
     }
 
     private fun ingredientImage(ingredient: String, size: String = "100x100"): String {
@@ -139,6 +141,6 @@ object DataMapper {
     }
 
     private fun equipmentImage(equipment: String, size: String = "100x100"): String {
-        return "https://spoonacular.com/cdn/equipment_${size}/${equipment.ifEmpty { "equipment.jpg"}}"
+        return "https://spoonacular.com/cdn/equipment_${size}/${equipment.ifEmpty { "equipment.jpg" }}"
     }
 }

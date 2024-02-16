@@ -26,5 +26,5 @@ data class ResultsItem(
 	val title: String,
 
 	@field:SerializedName("image")
-	val image: String,
+	val image: String?,
 )

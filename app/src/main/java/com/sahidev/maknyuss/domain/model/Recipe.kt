@@ -12,17 +12,12 @@ data class Recipe(
     @PrimaryKey
     val id: Int,
     val title: String,
-    val image: String,
+    val image: String? = null,
     val summary: String? = null,
     val price: String? = null,
     val likes: String? = null,
-    val veryPopular: Boolean = false,
-    val veryHealthy: Boolean = false,
     val readyMinutes: Int? = null,
     val servings: Int? = null,
-    val cuisines: String? = null,
-    val dishTypes: String? = null,
-    val source: String? = null,
     val equipments: List<Equipment> = emptyList(),
     val ingredients: List<Ingredient> = emptyList(),
 )

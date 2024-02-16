@@ -2,6 +2,7 @@ package com.sahidev.maknyuss.feature.component
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,7 +38,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ImageSlide(modifier: Modifier = Modifier, data: List<Recipe>) {
+fun ImageSlide(
+    data: List<Recipe>,
+    onClick: (id: Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val pagerState = rememberPagerState(pageCount = { data.size })
     LaunchedEffect(Unit) {
         while (true) {
@@ -59,7 +64,8 @@ fun ImageSlide(modifier: Modifier = Modifier, data: List<Recipe>) {
                 Card(
                     modifier = modifier
                         .wrapContentSize()
-                        .padding(4.dp),
+                        .padding(4.dp)
+                        .clickable { onClick(data[pagerState.currentPage].id) },
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     AsyncImage(
