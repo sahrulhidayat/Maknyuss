@@ -1,5 +1,6 @@
 package com.sahidev.maknyuss.feature.info
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,7 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -46,6 +46,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,33 +71,37 @@ import com.sahidev.maknyuss.feature.component.HtmlText
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InfoScreen(
+    onBack: () -> Unit,
     viewModel: InfoViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    var loading by remember { mutableStateOf(true) }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
-                title = {},
-                navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White,
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .background(Color.DarkGray.copy(0.4f))
-                                .padding(8.dp)
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent
-                ),
-                scrollBehavior = scrollBehavior
-            )
+            if (!loading) {
+                TopAppBar(
+                    title = {},
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                                contentDescription = "Back",
+                                tint = Color.White,
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .background(Color.DarkGray.copy(0.4f))
+                                    .padding(8.dp)
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent
+                    ),
+                    scrollBehavior = scrollBehavior
+                )
+            }
         }
     ) { padding ->
         when (val recipeState = viewModel.recipeState.value) {
@@ -105,15 +110,17 @@ fun InfoScreen(
             }
 
             is Resource.Loading -> {
+                loading = true
                 Text(modifier = Modifier.padding(padding), text = "Loading")
             }
 
             is Resource.Success -> {
+                loading = false
                 val data = recipeState.data
                     ?: RecipeAndInstructions(Recipe(0, "", ""), emptyList())
 
                 InfoColumn(
-                    data,
+                    data = data,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(bottom = padding.calculateBottomPadding())
@@ -124,7 +131,10 @@ fun InfoScreen(
 }
 
 @Composable
-fun InfoColumn(data: RecipeAndInstructions, modifier: Modifier = Modifier) {
+fun InfoColumn(
+    data: RecipeAndInstructions,
+    modifier: Modifier = Modifier
+) {
     val localDensity = LocalDensity.current
     var imageHeightDp by remember { mutableStateOf(250.dp) }
 
@@ -260,16 +270,19 @@ fun InfoColumn(data: RecipeAndInstructions, modifier: Modifier = Modifier) {
                     }
                     HtmlText(html = data.recipe.summary ?: "<b>No descriptions</b>")
                     Spacer(modifier = Modifier.size(4.dp))
-                    IngredientRow(ingredients = data.recipe.ingredients)
+                    IngredientCard(ingredients = data.recipe.ingredients)
                     Spacer(modifier = Modifier.size(6.dp))
-                    EquipmentRow(equipments = data.recipe.equipments)
+                    EquipmentCard(equipments = data.recipe.equipments)
                     Spacer(modifier = Modifier.size(4.dp))
-                    Text(text = "Instructions:")
+                    Text(
+                        text = "Instructions:",
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
             }
         }
         items(data.instructions) { instruction ->
-            InstructionCard(instruction)
+            InstructionCard(instruction = instruction)
         }
         item {
             Spacer(modifier = Modifier.height(10.dp))
@@ -286,62 +299,73 @@ fun InfoColumn(data: RecipeAndInstructions, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun IngredientRow(ingredients: List<Ingredient>, modifier: Modifier = Modifier) {
-    var expanded by remember { mutableStateOf(false) }
+fun IngredientCard(
+    ingredients: List<Ingredient>,
+    modifier: Modifier = Modifier
+) {
+    var expanded  by rememberSaveable { mutableStateOf(false) }
 
     Card(
-        modifier = modifier.clickable { expanded = !expanded },
+        modifier = modifier
+            .animateContentSize()
+            .clickable { expanded = !expanded },
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
     ) {
-        Row(
-            modifier = Modifier
-                .padding(vertical = 4.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "All Ingredients",
-                style = MaterialTheme.typography.titleMedium
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            if (!expanded) {
-                Icon(imageVector = Icons.Default.ExpandMore, contentDescription = "")
-            } else {
-                Icon(imageVector = Icons.Default.ExpandLess, contentDescription = "")
-            }
-        }
-
-        if (expanded) {
-            FlowRow(
-                modifier = Modifier.padding(4.dp)
+            Row(
+                modifier = Modifier
+                    .padding(vertical = 4.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
-                ingredients.forEach { ingredient ->
-                    Column(
-                        modifier = Modifier.padding(4.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Box(
-                            modifier = Modifier.size(80.dp)
+                Text(
+                    text = "All Ingredients",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                if (expanded) {
+                    Icon(imageVector = Icons.Default.ExpandLess, contentDescription = "")
+                } else {
+                    Icon(imageVector = Icons.Default.ExpandMore, contentDescription = "")
+                }
+            }
+
+            if (expanded) {
+                FlowRow(
+                    modifier = Modifier.padding(4.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    ingredients.forEach { ingredient ->
+                        Column(
+                            modifier = Modifier.padding(4.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            AsyncImage(
-                                model = ingredient.image,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .aspectRatio(80f / 80f)
-                                    .fillMaxSize()
+                            Box(
+                                modifier = Modifier.size(80.dp)
+                            ) {
+                                AsyncImage(
+                                    model = ingredient.image,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .aspectRatio(80f / 80f)
+                                        .fillMaxSize()
+                                )
+                            }
+                            Text(
+                                text = ingredient.name,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Text(
+                                text = ingredient.measures ?: "",
+                                style = MaterialTheme.typography.bodySmall
                             )
                         }
-                        Text(
-                            text = ingredient.name,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        Text(
-                            text = ingredient.measures ?: "",
-                            style = MaterialTheme.typography.bodySmall
-                        )
                     }
                 }
             }
@@ -351,58 +375,69 @@ fun IngredientRow(ingredients: List<Ingredient>, modifier: Modifier = Modifier) 
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun EquipmentRow(equipments: List<Equipment>, modifier: Modifier = Modifier) {
-    var expanded by remember { mutableStateOf(false) }
+fun EquipmentCard(
+    equipments: List<Equipment>,
+    modifier: Modifier = Modifier
+) {
+    var expanded  by rememberSaveable { mutableStateOf(false) }
 
     Card(
-        modifier = modifier.clickable { expanded = !expanded },
+        modifier = modifier
+            .animateContentSize()
+            .clickable { expanded = !expanded },
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
     ) {
-        Row(
-            modifier = Modifier
-                .padding(vertical = 4.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "All Equipments",
-                style = MaterialTheme.typography.titleMedium
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            if (!expanded) {
-                Icon(imageVector = Icons.Default.ExpandMore, contentDescription = "")
-            } else {
-                Icon(imageVector = Icons.Default.ExpandLess, contentDescription = "")
-            }
-        }
-
-        if (expanded) {
-            FlowRow(
-                modifier = Modifier.padding(4.dp)
+            Row(
+                modifier = Modifier
+                    .padding(vertical = 4.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
-                equipments.forEach { ingredient ->
-                    Column(
-                        modifier = Modifier.padding(4.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Box(
-                            modifier = Modifier.size(80.dp)
+                Text(
+                    text = "All Equipments",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                if (expanded) {
+                    Icon(imageVector = Icons.Default.ExpandLess, contentDescription = "")
+                } else {
+                    Icon(imageVector = Icons.Default.ExpandMore, contentDescription = "")
+                }
+            }
+
+            if (expanded) {
+                FlowRow(
+                    modifier = Modifier.padding(4.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    equipments.forEach { ingredient ->
+                        Column(
+                            modifier = Modifier.padding(4.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            AsyncImage(
-                                model = ingredient.image,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .aspectRatio(80f / 80f)
-                                    .fillMaxSize()
+                            Box(
+                                modifier = Modifier.size(80.dp)
+                            ) {
+                                AsyncImage(
+                                    model = ingredient.image,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .aspectRatio(80f / 80f)
+                                        .fillMaxSize()
+                                )
+                            }
+                            Text(
+                                text = ingredient.name,
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         }
-                        Text(
-                            text = ingredient.name,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
                     }
                 }
             }
@@ -411,14 +446,18 @@ fun EquipmentRow(equipments: List<Equipment>, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun InstructionCard(instruction: Instruction, modifier: Modifier = Modifier) {
-    val showEquipmentAndIngredient = remember { mutableStateOf(false) }
+fun InstructionCard(
+    instruction: Instruction,
+    modifier: Modifier = Modifier
+) {
+    var expanded  by rememberSaveable { mutableStateOf(false) }
 
     Card(
         modifier = modifier
             .padding(horizontal = 8.dp, vertical = 4.dp)
+            .animateContentSize()
             .clickable {
-                showEquipmentAndIngredient.value = !showEquipmentAndIngredient.value
+                expanded = !expanded
             },
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
@@ -440,7 +479,7 @@ fun InstructionCard(instruction: Instruction, modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center
             )
-            if (showEquipmentAndIngredient.value) {
+            if (expanded) {
                 Spacer(modifier = Modifier.size(4.dp))
                 EquipmentAndIngredient(
                     instruction.ingredients,
@@ -472,8 +511,7 @@ fun EquipmentAndIngredient(
     Column(
         modifier = modifier
             .padding(top = 4.dp)
-            .fillMaxWidth()
-            .wrapContentHeight(),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (ingredients.isNotEmpty()) {
@@ -482,7 +520,9 @@ fun EquipmentAndIngredient(
                 style = MaterialTheme.typography.titleSmall
             )
             Spacer(modifier = Modifier.size(2.dp))
-            FlowRow {
+            FlowRow(
+                horizontalArrangement = Arrangement.Center
+            ) {
                 ingredients.forEach { ingredient ->
                     Column(
                         modifier = Modifier.padding(4.dp),
@@ -514,7 +554,9 @@ fun EquipmentAndIngredient(
                 style = MaterialTheme.typography.titleSmall
             )
             Spacer(modifier = Modifier.size(2.dp))
-            FlowRow {
+            FlowRow(
+                horizontalArrangement = Arrangement.Center
+            ) {
                 equipments.forEach { equipment ->
                     Column(
                         modifier = Modifier.padding(4.dp),

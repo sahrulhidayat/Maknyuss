@@ -26,6 +26,6 @@ fun AppNavHost(
                 navController.navigate("${INFO_ROUTE}/$id")
             }
         )
-        infoScreen()
+        infoScreen(onBack = { navController.popBackStack() })
     }
 }
