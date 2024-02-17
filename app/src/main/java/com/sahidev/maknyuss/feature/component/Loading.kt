@@ -23,16 +23,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sahidev.maknyuss.feature.util.shimmerEffect
 import com.sahidev.maknyuss.ui.theme.backgroundLight
 
 @Composable
-fun SearchSkeleton(modifier: Modifier = Modifier) {
+fun SearchSkeleton(
+    modifier: Modifier = Modifier,
+    topPadding: Dp = 8.dp,
+) {
     LazyVerticalGrid(
         modifier = modifier.background(backgroundLight),
         columns = GridCells.Adaptive(150.dp),
-        contentPadding = PaddingValues(8.dp),
+        contentPadding = PaddingValues(start = 8.dp, top = topPadding, end = 8.dp, bottom = 8.dp),
         userScrollEnabled = false
     ) {
         items(10) {
@@ -42,11 +46,14 @@ fun SearchSkeleton(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun HomeSkeleton(modifier: Modifier = Modifier) {
+fun HomeSkeleton(
+    modifier: Modifier = Modifier,
+    topPadding: Dp = 8.dp,
+) {
     LazyVerticalGrid(
         modifier = modifier.background(backgroundLight),
         columns = GridCells.Adaptive(150.dp),
-        contentPadding = PaddingValues(8.dp),
+        contentPadding = PaddingValues(start = 8.dp, top = topPadding, end = 8.dp, bottom = 8.dp),
         userScrollEnabled = false
     ) {
         item(

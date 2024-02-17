@@ -22,8 +22,10 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
@@ -32,10 +34,14 @@ import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,7 +49,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -56,11 +67,38 @@ import com.sahidev.maknyuss.domain.model.Recipe
 import com.sahidev.maknyuss.domain.model.RecipeAndInstructions
 import com.sahidev.maknyuss.feature.component.HtmlText
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InfoScreen(
     viewModel: InfoViewModel = hiltViewModel()
 ) {
-    Scaffold { padding ->
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                title = {},
+                navigationIcon = {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(Color.DarkGray.copy(0.4f))
+                                .padding(8.dp)
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent
+                ),
+                scrollBehavior = scrollBehavior
+            )
+        }
+    ) { padding ->
         when (val recipeState = viewModel.recipeState.value) {
             is Resource.Error -> {
                 Text(modifier = Modifier.padding(padding), text = "Error")
@@ -77,8 +115,8 @@ fun InfoScreen(
                 InfoColumn(
                     data,
                     modifier = Modifier
-                        .padding(padding)
                         .fillMaxSize()
+                        .padding(bottom = padding.calculateBottomPadding())
                 )
             }
         }
@@ -87,138 +125,147 @@ fun InfoScreen(
 
 @Composable
 fun InfoColumn(data: RecipeAndInstructions, modifier: Modifier = Modifier) {
+    val localDensity = LocalDensity.current
+    var imageHeightDp by remember { mutableStateOf(250.dp) }
+
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize()
     ) {
         item {
-            Box(
-                modifier = modifier.wrapContentSize()
-            ) {
-                AsyncImage(
-                    model = data.recipe.image,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .aspectRatio(556f / 370f)
-                        .fillMaxWidth()
-                )
+            Box {
                 Box(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .height(16.dp)
-                        .align(Alignment.BottomCenter)
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .align(Alignment.TopCenter)
+                ) {
+                    AsyncImage(
+                        model = data.recipe.image,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .aspectRatio(556f / 370f)
+                            .fillMaxWidth()
+                            .onGloballyPositioned { coordinates ->
+                                imageHeightDp =
+                                    with(localDensity) { coordinates.size.height.toDp() }
+                            }
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .padding(top = imageHeightDp - 16.dp)
                         .background(
                             color = MaterialTheme.colorScheme.background,
                             shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
                         )
-                )
-            }
-            Column(modifier = modifier.padding(horizontal = 8.dp)) {
-                Text(
-                    text = data.recipe.title,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                LazyRow(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp, vertical = 10.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(8.dp)
                 ) {
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .background(
-                                    color = MaterialTheme.colorScheme.secondaryContainer,
-                                    shape = RoundedCornerShape(24.dp)
+                    Text(
+                        text = data.recipe.title,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    LazyRow(
+                        modifier = Modifier
+                            .padding(vertical = 10.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .background(
+                                        color = MaterialTheme.colorScheme.secondaryContainer,
+                                        shape = RoundedCornerShape(24.dp)
+                                    )
+                                    .padding(horizontal = 6.dp, vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.AttachMoney,
+                                    contentDescription = "Price",
+                                    modifier = Modifier.size(20.dp)
                                 )
-                                .padding(horizontal = 6.dp, vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.AttachMoney,
-                                contentDescription = "Price",
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "${data.recipe.price} per serving",
-                                style = MaterialTheme.typography.labelSmall
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Row(
-                            modifier = Modifier
-                                .background(
-                                    color = MaterialTheme.colorScheme.secondaryContainer,
-                                    shape = RoundedCornerShape(24.dp)
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "${data.recipe.price} per serving",
+                                    style = MaterialTheme.typography.labelSmall
                                 )
-                                .padding(horizontal = 6.dp, vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Timer,
-                                contentDescription = "Ready minutes",
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "${data.recipe.readyMinutes.toString()} min",
-                                style = MaterialTheme.typography.labelSmall
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Row(
-                            modifier = Modifier
-                                .background(
-                                    color = MaterialTheme.colorScheme.secondaryContainer,
-                                    shape = RoundedCornerShape(24.dp)
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Row(
+                                modifier = Modifier
+                                    .background(
+                                        color = MaterialTheme.colorScheme.secondaryContainer,
+                                        shape = RoundedCornerShape(24.dp)
+                                    )
+                                    .padding(horizontal = 6.dp, vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Timer,
+                                    contentDescription = "Ready minutes",
+                                    modifier = Modifier.size(20.dp)
                                 )
-                                .padding(horizontal = 6.dp, vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Recommend,
-                                contentDescription = "Likes",
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = data.recipe.likes ?: "0",
-                                style = MaterialTheme.typography.labelSmall
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Row(
-                            modifier = Modifier
-                                .background(
-                                    color = MaterialTheme.colorScheme.secondaryContainer,
-                                    shape = RoundedCornerShape(24.dp)
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "${data.recipe.readyMinutes.toString()} min",
+                                    style = MaterialTheme.typography.labelSmall
                                 )
-                                .padding(horizontal = 6.dp, vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Restaurant,
-                                contentDescription = "Servings",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "${data.recipe.servings} servings",
-                                color = MaterialTheme.colorScheme.primary,
-                                style = MaterialTheme.typography.labelSmall
-                            )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Row(
+                                modifier = Modifier
+                                    .background(
+                                        color = MaterialTheme.colorScheme.secondaryContainer,
+                                        shape = RoundedCornerShape(24.dp)
+                                    )
+                                    .padding(horizontal = 6.dp, vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Recommend,
+                                    contentDescription = "Likes",
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = data.recipe.likes ?: "0",
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Row(
+                                modifier = Modifier
+                                    .background(
+                                        color = MaterialTheme.colorScheme.secondaryContainer,
+                                        shape = RoundedCornerShape(24.dp)
+                                    )
+                                    .padding(horizontal = 6.dp, vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Restaurant,
+                                    contentDescription = "Servings",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "${data.recipe.servings} servings",
+                                    color = MaterialTheme.colorScheme.primary,
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
                         }
                     }
+                    HtmlText(html = data.recipe.summary ?: "<b>No descriptions</b>")
+                    Spacer(modifier = Modifier.size(4.dp))
+                    IngredientRow(ingredients = data.recipe.ingredients)
+                    Spacer(modifier = Modifier.size(6.dp))
+                    EquipmentRow(equipments = data.recipe.equipments)
+                    Spacer(modifier = Modifier.size(4.dp))
+                    Text(text = "Instructions:")
                 }
-                HtmlText(html = data.recipe.summary ?: "<b>No descriptions</b>")
-                Spacer(modifier = Modifier.size(4.dp))
-                IngredientRow(ingredients = data.recipe.ingredients)
-                Spacer(modifier = Modifier.size(6.dp))
-                EquipmentRow(equipments = data.recipe.equipments)
-                Spacer(modifier = Modifier.size(4.dp))
-                Text(text = "Instructions:")
             }
         }
         items(data.instructions) { instruction ->

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -26,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,9 +34,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahidev.maknyuss.data.utils.Constant.DEFAULT_ERROR_MESSAGE
@@ -57,12 +57,9 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val searchHistory = viewModel.searchHistory.value
-    val showingSearchResult  = viewModel.showingSearchResult.value
+    val showingSearchResult = viewModel.showingSearchResult.value
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
-
-    var maxWidth by remember { mutableStateOf(0.dp) }
-    val density = LocalDensity.current
 
     BackHandler {
         if (showingSearchResult) {
@@ -76,11 +73,7 @@ fun HomeScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .onGloballyPositioned {
-                        maxWidth = with(density) {
-                            it.size.width.toDp()
-                        }
-                    },
+                    .padding(bottom = 4.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
                 SearchBar(
@@ -121,9 +114,7 @@ fun HomeScreen(
                             }
                         }
                     },
-                    modifier = Modifier
-                        .padding(bottom = 8.dp)
-                        .sizeIn(minWidth = maxWidth - 20.dp)
+                    colors = SearchBarDefaults.colors(containerColor = Color.White)
                 ) {
                     searchHistory.forEach {
                         Row(
@@ -168,7 +159,9 @@ fun HomeScreen(
             is Resource.Error -> {
                 HomeError(
                     message = recipeState.message ?: DEFAULT_ERROR_MESSAGE,
-                    modifier = Modifier.padding(padding)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = padding.calculateBottomPadding())
                 )
             }
 
@@ -176,37 +169,39 @@ fun HomeScreen(
                 if (showingSearchResult) {
                     SearchSkeleton(
                         modifier = Modifier
-                            .padding(padding)
-                            .fillMaxSize(),
+                            .fillMaxSize()
+                            .padding(bottom = padding.calculateBottomPadding()),
+                        topPadding = padding.calculateTopPadding(),
                     )
                 } else {
                     HomeSkeleton(
                         modifier = Modifier
-                            .padding(padding)
-                            .fillMaxSize(),
+                            .fillMaxSize()
+                            .padding(bottom = padding.calculateBottomPadding()),
+                        topPadding = padding.calculateTopPadding(),
                     )
                 }
             }
 
             is Resource.Success -> {
                 val data = recipeState.data ?: emptyList()
-
                 if (showingSearchResult) {
                     SearchGrid(
                         data = data,
+                        topPadding = padding.calculateTopPadding(),
                         onClickItem = onClickItem,
                         modifier = Modifier
-                            .padding(padding)
-                            .fillMaxSize(),
-
+                            .fillMaxSize()
+                            .padding(bottom = padding.calculateBottomPadding())
                     )
                 } else {
                     HomeGrid(
                         data = data,
+                        topPadding = padding.calculateTopPadding(),
                         onClickItem = onClickItem,
                         modifier = Modifier
-                            .padding(padding)
                             .fillMaxSize()
+                            .padding(bottom = padding.calculateBottomPadding())
                     )
                 }
             }
@@ -218,12 +213,13 @@ fun HomeScreen(
 fun HomeGrid(
     data: List<Recipe>,
     modifier: Modifier = Modifier,
+    topPadding: Dp = 8.dp,
     onClickItem: (id: Int) -> Unit
 ) {
     LazyVerticalGrid(
         modifier = modifier.background(backgroundLight),
         columns = GridCells.Adaptive(150.dp),
-        contentPadding = PaddingValues(8.dp)
+        contentPadding = PaddingValues(start = 8.dp, top = topPadding, end = 8.dp, bottom = 8.dp)
     ) {
         item(
             span = {
@@ -247,13 +243,14 @@ fun HomeGrid(
 @Composable
 fun SearchGrid(
     data: List<Recipe>,
+    modifier: Modifier = Modifier,
+    topPadding: Dp = 8.dp,
     onClickItem: (id: Int) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
         modifier = modifier.background(backgroundLight),
         columns = GridCells.Adaptive(150.dp),
-        contentPadding = PaddingValues(8.dp)
+        contentPadding = PaddingValues(start = 8.dp, top = topPadding, end = 8.dp, bottom = 8.dp)
     ) {
         items(data) { recipe ->
             RecipeCard(
