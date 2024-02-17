@@ -5,6 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.sahidev.maknyuss.feature.component.navigateToMenu
+import com.sahidev.maknyuss.feature.favorite.favoriteScreen
 import com.sahidev.maknyuss.feature.home.HOME_ROUTE
 import com.sahidev.maknyuss.feature.home.homeScreen
 import com.sahidev.maknyuss.feature.info.INFO_ROUTE
@@ -24,8 +26,17 @@ fun AppNavHost(
         homeScreen(
             onClickItem = { id ->
                 navController.navigate("${INFO_ROUTE}/$id")
+            },
+            navigateToMenu = { item ->
+                navController.navigateToMenu(item)
             }
         )
         infoScreen(onBack = { navController.popBackStack() })
+        favoriteScreen(
+            onBack = { navController.popBackStack() },
+            onClickItem = { id ->
+                navController.navigate("${INFO_ROUTE}/$id")
+            }
+        )
     }
 }

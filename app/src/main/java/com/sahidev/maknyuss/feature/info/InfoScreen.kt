@@ -1,6 +1,8 @@
 package com.sahidev.maknyuss.feature.info
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,9 +28,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.Recommend
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Timer
@@ -60,12 +62,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.sahidev.maknyuss.data.utils.Constant
 import com.sahidev.maknyuss.domain.Resource
 import com.sahidev.maknyuss.domain.model.Equipment
 import com.sahidev.maknyuss.domain.model.Ingredient
 import com.sahidev.maknyuss.domain.model.Instruction
 import com.sahidev.maknyuss.domain.model.Recipe
 import com.sahidev.maknyuss.domain.model.RecipeAndInstructions
+import com.sahidev.maknyuss.feature.component.CircularLoading
+import com.sahidev.maknyuss.feature.component.ErrorScreen
 import com.sahidev.maknyuss.feature.component.HtmlText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,7 +79,9 @@ fun InfoScreen(
     onBack: () -> Unit,
     viewModel: InfoViewModel = hiltViewModel()
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+        snapAnimationSpec = spring(stiffness = Spring.StiffnessHigh)
+    )
     var loading by remember { mutableStateOf(true) }
 
     Scaffold(
@@ -97,7 +104,8 @@ fun InfoScreen(
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent
+                        containerColor = Color.Transparent,
+                        scrolledContainerColor = Color.Transparent
                     ),
                     scrollBehavior = scrollBehavior
                 )
@@ -106,12 +114,21 @@ fun InfoScreen(
     ) { padding ->
         when (val recipeState = viewModel.recipeState.value) {
             is Resource.Error -> {
-                Text(modifier = Modifier.padding(padding), text = "Error")
+                ErrorScreen(
+                    message = recipeState.message ?: Constant.DEFAULT_ERROR_MESSAGE,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = padding.calculateBottomPadding())
+                )
             }
 
             is Resource.Loading -> {
                 loading = true
-                Text(modifier = Modifier.padding(padding), text = "Loading")
+                CircularLoading(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = padding.calculateBottomPadding())
+                )
             }
 
             is Resource.Success -> {
@@ -191,14 +208,16 @@ fun InfoColumn(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.AttachMoney,
+                                    imageVector = Icons.Default.MonetizationOn,
                                     contentDescription = "Price",
+                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = "${data.recipe.price} per serving",
-                                    style = MaterialTheme.typography.labelSmall
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.primary,
                                 )
                             }
                             Spacer(modifier = Modifier.width(8.dp))
@@ -256,13 +275,11 @@ fun InfoColumn(
                                 Icon(
                                     imageVector = Icons.Default.Restaurant,
                                     contentDescription = "Servings",
-                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = "${data.recipe.servings} servings",
-                                    color = MaterialTheme.colorScheme.primary,
                                     style = MaterialTheme.typography.labelSmall
                                 )
                             }
