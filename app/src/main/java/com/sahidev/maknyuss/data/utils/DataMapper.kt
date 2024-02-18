@@ -32,10 +32,12 @@ object DataMapper {
             input.id,
             input.analyzedInstructions
         )
-        instructions.forEach { instruction ->
-            instruction.equipments.forEach {
-                if (!equipments.contains(it)) {
-                    equipments.add(it)
+        if (instructions.isNotEmpty()) {
+            instructions.forEach { instruction ->
+                instruction.equipments.forEach {
+                    if (!equipments.contains(it)) {
+                        equipments.add(it)
+                    }
                 }
             }
         }
@@ -74,17 +76,21 @@ object DataMapper {
     private fun mapExtendedIngredients(
         input: List<ExtendedIngredientsItem>
     ): List<Ingredient> {
-        return input.map {
-            val amount = it.measures.metric.amount.toString()
-            val unit = it.measures.metric.unitShort
-            val measures = "${amount.trimTrailingZero()} $unit"
+        if (input.isNotEmpty()) {
+            return input.map {
+                val amount = it.measures.metric.amount.toString()
+                val unit = it.measures.metric.unitShort
+                val measures = "${amount.trimTrailingZero()} $unit"
 
-            Ingredient(
-                it.name.capitalize(),
-                ingredientImage(it.image),
-                it.nameClean,
-                measures
-            )
+                Ingredient(
+                    it.name.capitalize(),
+                    ingredientImage(it.image),
+                    it.nameClean,
+                    measures
+                )
+            }
+        } else {
+            return emptyList()
         }
     }
 
@@ -92,25 +98,33 @@ object DataMapper {
         recipeId: Int,
         input: List<AnalyzedInstructionsItem>
     ): List<Instruction> {
-        return input[0].steps.map {
-            Instruction(
-                it.number,
-                it.step,
-                mapEquipments(it.equipments),
-                mapIngredients(it.ingredients),
-                recipeId
-            )
+        return if (input.isNotEmpty()) {
+            input[0].steps.map {
+                Instruction(
+                    it.number,
+                    it.step,
+                    mapEquipments(it.equipments),
+                    mapIngredients(it.ingredients),
+                    recipeId
+                )
+            }
+        } else {
+            emptyList()
         }
     }
 
     private fun mapEquipments(
         input: List<EquipmentItem>
     ): List<Equipment> {
-        return input.map {
-            Equipment(
-                it.name.capitalize(),
-                equipmentImage(it.image)
-            )
+        return if (input.isNotEmpty()) {
+            input.map {
+                Equipment(
+                    it.name.capitalize(),
+                    equipmentImage(it.image)
+                )
+            }
+        } else {
+            emptyList()
         }
     }
 

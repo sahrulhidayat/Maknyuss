@@ -60,6 +60,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -323,21 +324,39 @@ fun InfoColumn(
                         text = "Instructions:",
                         style = MaterialTheme.typography.titleMedium
                     )
+                    if (data.instructions.isEmpty()) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "No instructions provided",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = Color.Gray,
+                                fontStyle = FontStyle.Italic
+                            )
+                        }
+                    }
                 }
             }
         }
-        items(data.instructions) { instruction ->
-            InstructionCard(instruction = instruction)
-        }
-        item {
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(text = "Bon Appetit \uD83D\uDC4C")
+        if (data.instructions.isNotEmpty()) {
+            items(data.instructions) { instruction ->
+                InstructionCard(instruction = instruction)
             }
-            Spacer(modifier = Modifier.height(10.dp))
+            item {
+                Spacer(modifier = Modifier.height(10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(text = "Bon Appetit \uD83D\uDC4C")
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+            }
         }
     }
 }
