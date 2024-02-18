@@ -114,7 +114,11 @@ fun HomeScreen(
                         },
                         selected = false,
                         icon = {
-                            Icon(imageVector = item.icon, contentDescription = item.title)
+                            Icon(
+                                imageVector = item.icon,
+                                contentDescription = item.title,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         },
                         onClick = {
                             navigateToMenu(item)

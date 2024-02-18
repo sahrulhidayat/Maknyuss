@@ -45,7 +45,7 @@ class RecipeRepositoryImpl @Inject constructor(
             }
 
             override fun shouldFetch(data: RecipeAndInstructions?): Boolean {
-                return data?.recipe?.summary.isNullOrBlank() || data?.instructions.isNullOrEmpty()
+                return data?.recipe == null
             }
         }.asFlow()
     }

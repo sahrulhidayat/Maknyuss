@@ -1,7 +1,7 @@
 package com.sahidev.maknyuss.feature.component
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import com.sahidev.maknyuss.feature.favorite.navigateToFavorite
@@ -9,7 +9,7 @@ import com.sahidev.maknyuss.feature.favorite.navigateToFavorite
 val menuItems: List<MenuItem> = listOf(
     MenuItem(
         title = Menu.FAVORITE.title,
-        icon = Icons.Filled.Favorite
+        icon = Icons.Filled.FavoriteBorder
     )
 )
 
