@@ -20,6 +20,8 @@ data class Recipe(
     val servings: Int? = null,
     val equipments: List<Equipment> = emptyList(),
     val ingredients: List<Ingredient> = emptyList(),
+    val favorite: Boolean = false,
+    val timestamp: Long = System.currentTimeMillis()
 )
 
 @Entity(

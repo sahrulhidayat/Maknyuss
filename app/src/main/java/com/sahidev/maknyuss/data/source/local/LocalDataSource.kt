@@ -13,10 +13,6 @@ class LocalDataSource @Inject constructor(
     private val recipeDao: RecipeDao,
     private val searchDao: SearchDao,
 ) {
-    suspend fun checkRecipe(id: Int): Boolean {
-        return recipeDao.checkRecipe(id)
-    }
-
     fun getRecipeInfo(id: Int): Flow<RecipeAndInstructions> = recipeDao.getRecipeInfo(id)
 
     fun getSavedRecipes(): Flow<List<Recipe>> = recipeDao.getSavedRecipes()
@@ -25,7 +21,7 @@ class LocalDataSource @Inject constructor(
 
     suspend fun addInstruction(instruction: Instruction) = recipeDao.addInstruction(instruction)
 
-    suspend fun deleteRecipe(id: Int) = recipeDao.deleteRecipe(id)
+    suspend fun deleteRecipe(recipe: Recipe) = recipeDao.deleteRecipe(recipe)
 
     suspend fun addSearchHistory(search: Search) = searchDao.addSearchHistory(search)
 

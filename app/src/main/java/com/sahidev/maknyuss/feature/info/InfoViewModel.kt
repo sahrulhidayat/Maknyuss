@@ -26,7 +26,29 @@ class InfoViewModel @Inject constructor(
     }
 
     fun onEvent(event: InfoEvent) {
+        when (event) {
+            is InfoEvent.ToggleFavorite -> {
+                viewModelScope.launch {
+                    val recipe = event.data.recipe
+                        .copy(
+                            favorite = event.value,
+                            timestamp = System.currentTimeMillis()
+                        )
+                    val instructions = event.data.instructions
 
+                    if (event.value) {
+                        recipeUseCase.addRecipe(recipe)
+                        instructions.forEach { instruction ->
+                            recipeUseCase.addInstruction(instruction)
+                        }
+                        getRecipeInfo(recipeId)
+                    } else {
+                        recipeUseCase.deleteRecipe(recipe)
+                        getRecipeInfo(recipeId)
+                    }
+                }
+            }
+        }
     }
 
     private fun getRecipeInfo(id: Int) {
@@ -39,4 +61,6 @@ class InfoViewModel @Inject constructor(
     }
 }
 
-sealed class InfoEvent()
+sealed class InfoEvent {
+    data class ToggleFavorite(val value: Boolean, val data: RecipeAndInstructions) : InfoEvent()
+}

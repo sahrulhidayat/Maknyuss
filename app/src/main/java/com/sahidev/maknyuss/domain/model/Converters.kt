@@ -2,6 +2,7 @@ package com.sahidev.maknyuss.domain.model
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class Converters {
     @TypeConverter
@@ -15,8 +16,8 @@ class Converters {
     fun stringToInstructions(
         data: String
     ): List<Equipment> {
-        val equipments = listOf<Equipment>()
-        return Gson().fromJson(data, equipments::class.java)
+        val equipments = object : TypeToken<List<Equipment>>() {}.type
+        return Gson().fromJson(data, equipments)
     }
 
     @TypeConverter
@@ -30,7 +31,7 @@ class Converters {
     fun stringToIngredients(
         data: String
     ): List<Ingredient> {
-        val instructions = listOf<Ingredient>()
-        return Gson().fromJson(data, instructions::class.java)
+        val ingredients = object : TypeToken<List<Ingredient>>() {}.type
+        return Gson().fromJson(data, ingredients)
     }
 }

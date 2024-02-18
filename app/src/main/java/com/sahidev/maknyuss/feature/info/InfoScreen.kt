@@ -30,6 +30,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.Recommend
 import androidx.compose.material.icons.filled.Restaurant
@@ -138,6 +140,9 @@ fun InfoScreen(
 
                 InfoColumn(
                     data = data,
+                    toggleFavorite = { value ->
+                        viewModel.onEvent(InfoEvent.ToggleFavorite(value, data))
+                    },
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(bottom = padding.calculateBottomPadding())
@@ -150,6 +155,7 @@ fun InfoScreen(
 @Composable
 fun InfoColumn(
     data: RecipeAndInstructions,
+    toggleFavorite: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val localDensity = LocalDensity.current
@@ -187,10 +193,32 @@ fun InfoColumn(
                         )
                         .padding(8.dp)
                 ) {
-                    Text(
-                        text = data.recipe.title,
-                        style = MaterialTheme.typography.titleMedium
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (data.recipe.favorite) {
+                            IconButton(onClick = { toggleFavorite(false) }) {
+                                Icon(
+                                    imageVector = Icons.Default.Favorite,
+                                    contentDescription = "Toggle favorite",
+                                    tint = Color.Red
+                                )
+                            }
+                        } else {
+                            IconButton(onClick = { toggleFavorite(true) }) {
+                                Icon(
+                                    imageVector = Icons.Default.FavoriteBorder,
+                                    contentDescription = "Toggle not favorite"
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = data.recipe.title,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
                     LazyRow(
                         modifier = Modifier
                             .padding(vertical = 10.dp)
@@ -320,7 +348,7 @@ fun IngredientCard(
     ingredients: List<Ingredient>,
     modifier: Modifier = Modifier
 ) {
-    var expanded  by rememberSaveable { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
     Card(
         modifier = modifier
@@ -396,7 +424,7 @@ fun EquipmentCard(
     equipments: List<Equipment>,
     modifier: Modifier = Modifier
 ) {
-    var expanded  by rememberSaveable { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
     Card(
         modifier = modifier
@@ -467,7 +495,7 @@ fun InstructionCard(
     instruction: Instruction,
     modifier: Modifier = Modifier
 ) {
-    var expanded  by rememberSaveable { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
     Card(
         modifier = modifier

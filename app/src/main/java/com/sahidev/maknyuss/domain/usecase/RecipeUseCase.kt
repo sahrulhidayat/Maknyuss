@@ -14,9 +14,6 @@ class RecipeUseCaseImpl @Inject constructor(
     override fun searchRecipe(query: String, offset: Int): Flow<Resource<List<Recipe>>> =
         repository.searchRecipe(query, offset)
 
-    override suspend fun checkRecipe(id: Int): Boolean =
-        repository.checkRecipe(id)
-
     override suspend fun getRecipeInfo(id: Int): Flow<Resource<RecipeAndInstructions>> =
         repository.getRecipeInfo(id)
 
@@ -30,8 +27,8 @@ class RecipeUseCaseImpl @Inject constructor(
     override suspend fun addRecipe(recipe: Recipe) =
         repository.addRecipe(recipe)
 
-    override suspend fun deleteRecipe(id: Int) =
-        repository.deleteRecipe(id)
+    override suspend fun deleteRecipe(recipe: Recipe) =
+        repository.deleteRecipe(recipe)
 
     override suspend fun addInstruction(instruction: Instruction) =
         repository.addInstruction(instruction)
@@ -39,11 +36,10 @@ class RecipeUseCaseImpl @Inject constructor(
 
 interface RecipeUseCase {
     fun searchRecipe(query: String, offset: Int): Flow<Resource<List<Recipe>>>
-    suspend fun checkRecipe(id: Int): Boolean
     suspend fun getRecipeInfo(id: Int): Flow<Resource<RecipeAndInstructions>>
     suspend fun getRandomRecipe(): Flow<Resource<List<Recipe>>>
     fun getSavedRecipes(): Flow<Resource<List<Recipe>>>
     suspend fun addRecipe(recipe: Recipe)
-    suspend fun deleteRecipe(id: Int)
+    suspend fun deleteRecipe(recipe: Recipe)
     suspend fun addInstruction(instruction: Instruction)
 }

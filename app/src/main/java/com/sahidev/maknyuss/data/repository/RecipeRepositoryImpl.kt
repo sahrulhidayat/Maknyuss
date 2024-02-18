@@ -34,10 +34,6 @@ class RecipeRepositoryImpl @Inject constructor(
         }.asFlow()
     }
 
-    override suspend fun checkRecipe(id: Int): Boolean {
-        return localDataSource.checkRecipe(id)
-    }
-
     override suspend fun getRecipeInfo(id: Int): Flow<Resource<RecipeAndInstructions>> {
         return object : NetworkBoundResource<RecipeAndInstructions>() {
             override fun loadFromDB(): Flow<RecipeAndInstructions> {
@@ -92,8 +88,8 @@ class RecipeRepositoryImpl @Inject constructor(
         localDataSource.addRecipe(recipe)
     }
 
-    override suspend fun deleteRecipe(id: Int) {
-        localDataSource.deleteRecipe(id)
+    override suspend fun deleteRecipe(recipe: Recipe) {
+        localDataSource.deleteRecipe(recipe)
     }
 
     override suspend fun addInstruction(instruction: Instruction) {

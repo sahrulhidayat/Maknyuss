@@ -22,7 +22,7 @@ fun NavController.navigateToMenu(item: MenuItem) {
 }
 
 enum class Menu(val title: String) {
-    FAVORITE("Favorite")
+    FAVORITE("My Favorite")
 }
 
 data class MenuItem(
