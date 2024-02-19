@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,11 +18,15 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -64,7 +69,7 @@ import com.sahidev.maknyuss.ui.theme.MaknyussTheme
 import com.sahidev.maknyuss.ui.theme.backgroundLight
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
     onClickItem: (id: Int) -> Unit,
@@ -76,13 +81,26 @@ fun HomeScreen(
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
 
+    var refreshing by remember { mutableStateOf(false) }
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = refreshing,
+        onRefresh = {
+            refreshing = true
+            if (showingSearchResult) {
+                viewModel.onEvent(HomeEvent.SearchRecipe(query))
+            } else {
+                viewModel.onEvent(HomeEvent.PullRefresh)
+            }
+        }
+    )
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
     BackHandler {
         if (showingSearchResult) {
             viewModel.onEvent(HomeEvent.ShowingSearchResult(false))
-            viewModel.getRandomRecipes()
+            viewModel.onEvent(HomeEvent.PullRefresh)
         }
         if (drawerState.isOpen) {
             scope.launch { drawerState.close() }
@@ -258,24 +276,35 @@ fun HomeScreen(
                 }
 
                 is Resource.Success -> {
+                    refreshing = false
                     val data = recipeState.data ?: emptyList()
-                    if (showingSearchResult) {
-                        RecipeGrid(
-                            data = data,
-                            topPadding = padding.calculateTopPadding(),
-                            onClickItem = onClickItem,
+
+                    Box(
+                        modifier = Modifier
+                            .pullRefresh(pullRefreshState)
+                            .padding(bottom = padding.calculateBottomPadding())
+                    ) {
+                        if (showingSearchResult) {
+                            RecipeGrid(
+                                data = data,
+                                topPadding = padding.calculateTopPadding(),
+                                onClickItem = onClickItem,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        } else {
+                            HomeGrid(
+                                data = data,
+                                topPadding = padding.calculateTopPadding(),
+                                onClickItem = onClickItem,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                        PullRefreshIndicator(
+                            refreshing = refreshing,
+                            state = pullRefreshState,
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(bottom = padding.calculateBottomPadding())
-                        )
-                    } else {
-                        HomeGrid(
-                            data = data,
-                            topPadding = padding.calculateTopPadding(),
-                            onClickItem = onClickItem,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(bottom = padding.calculateBottomPadding())
+                                .align(Alignment.TopCenter)
+                                .padding(top = padding.calculateTopPadding())
                         )
                     }
                 }

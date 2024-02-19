@@ -48,6 +48,10 @@ class InfoViewModel @Inject constructor(
                     }
                 }
             }
+
+            InfoEvent.PullRefresh -> {
+                getRecipeInfo(recipeId)
+            }
         }
     }
 
@@ -63,4 +67,5 @@ class InfoViewModel @Inject constructor(
 
 sealed class InfoEvent {
     data class ToggleFavorite(val value: Boolean, val data: RecipeAndInstructions) : InfoEvent()
+    data object PullRefresh : InfoEvent()
 }

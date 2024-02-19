@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExpandLess
@@ -36,6 +37,9 @@ import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.Recommend
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -76,7 +80,7 @@ import com.sahidev.maknyuss.feature.component.CircularLoading
 import com.sahidev.maknyuss.feature.component.ErrorScreen
 import com.sahidev.maknyuss.feature.component.HtmlText
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun InfoScreen(
     onBack: () -> Unit,
@@ -86,6 +90,15 @@ fun InfoScreen(
         snapAnimationSpec = spring(stiffness = Spring.StiffnessHigh)
     )
     var loading by remember { mutableStateOf(true) }
+
+    var refreshing by remember { mutableStateOf(false) }
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = refreshing,
+        onRefresh = {
+            refreshing = true
+            viewModel.onEvent(InfoEvent.PullRefresh)
+        }
+    )
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -136,18 +149,28 @@ fun InfoScreen(
 
             is Resource.Success -> {
                 loading = false
+                refreshing = false
                 val data = recipeState.data
                     ?: RecipeAndInstructions(Recipe(0, "", ""), emptyList())
 
-                InfoColumn(
-                    data = data,
-                    toggleFavorite = { value ->
-                        viewModel.onEvent(InfoEvent.ToggleFavorite(value, data))
-                    },
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .pullRefresh(pullRefreshState)
                         .padding(bottom = padding.calculateBottomPadding())
-                )
+                ) {
+                    InfoColumn(
+                        data = data,
+                        toggleFavorite = { value ->
+                            viewModel.onEvent(InfoEvent.ToggleFavorite(value, data))
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    PullRefreshIndicator(
+                        refreshing = loading,
+                        state = pullRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter)
+                    )
+                }
             }
         }
     }

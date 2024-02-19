@@ -63,10 +63,13 @@ class HomeViewModel @Inject constructor(
                 }
             }
 
+            HomeEvent.PullRefresh -> {
+                getRandomRecipes()
+            }
         }
     }
 
-    fun getRandomRecipes() {
+    private fun getRandomRecipes() {
         viewModelScope.launch {
             recipeUseCase.getRandomRecipe()
                 .collect { data ->
@@ -90,4 +93,5 @@ sealed class HomeEvent {
     data class DeleteSearchHistory(val query: String) : HomeEvent()
     data class ShowingSearchResult(val value: Boolean) : HomeEvent()
     data object ClearSearchHistory : HomeEvent()
+    data object PullRefresh : HomeEvent()
 }
