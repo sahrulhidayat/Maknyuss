@@ -47,8 +47,8 @@ object NetworkModule {
             .cache(cache)
             .addNetworkInterceptor(CacheInterceptor())
             .addInterceptor(NetworkMonitorInterceptor(liveNetworkMonitor))
-            .connectTimeout(120, TimeUnit.SECONDS)
-            .readTimeout(120, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
 
         if (BuildConfig.DEBUG) {
             val logging = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)

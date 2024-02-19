@@ -5,5 +5,5 @@ object Constant {
     const val NO_CACHE = "no-cache"
 
     const val DEFAULT_ERROR_MESSAGE = "Something went wrong"
-    const val NETWORK_ERROR_MESSAGE = "Network Error, please try again later"
+    const val NETWORK_ERROR_MESSAGE = "Network Error\nPlease try again later"
 }

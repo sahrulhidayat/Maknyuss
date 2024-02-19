@@ -3,13 +3,13 @@ package com.sahidev.maknyuss.data.source.network
 import android.util.Log
 import com.sahidev.maknyuss.data.source.network.api.ApiResponse
 import com.sahidev.maknyuss.data.source.network.api.ApiService
-import com.sahidev.maknyuss.data.source.network.monitor.NoNetworkException
 import com.sahidev.maknyuss.data.utils.Constant.NETWORK_ERROR_MESSAGE
 import com.sahidev.maknyuss.data.utils.DataMapper
 import com.sahidev.maknyuss.domain.model.Recipe
 import com.sahidev.maknyuss.domain.model.RecipeAndInstructions
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class RemoteDataSource @Inject constructor(
@@ -35,7 +35,8 @@ class RemoteDataSource @Inject constructor(
                 }
             } catch (exception: Exception) {
                 when (exception) {
-                    is NoNetworkException -> {
+                    is HttpException -> {
+                        Log.e(TAG, "searchRecipe: $exception")
                         send(ApiResponse.Error(NETWORK_ERROR_MESSAGE))
                     }
 
@@ -59,7 +60,8 @@ class RemoteDataSource @Inject constructor(
                 )
             } catch (exception: Exception) {
                 when (exception) {
-                    is NoNetworkException -> {
+                    is HttpException -> {
+                        Log.e(TAG, "getRecipeInfo: $exception")
                         send(ApiResponse.Error(NETWORK_ERROR_MESSAGE))
                     }
 
@@ -88,13 +90,14 @@ class RemoteDataSource @Inject constructor(
                 }
             } catch (exception: Exception) {
                 when (exception) {
-                    is NoNetworkException -> {
+                    is HttpException -> {
+                        Log.e(TAG, "getRandomRecipes: $exception")
                         send(ApiResponse.Error(NETWORK_ERROR_MESSAGE))
                     }
 
                     else -> {
-                        send(ApiResponse.Error(exception.toString()))
                         Log.e(TAG, "getRandomRecipes: $exception")
+                        send(ApiResponse.Error(exception.toString()))
                     }
                 }
             }

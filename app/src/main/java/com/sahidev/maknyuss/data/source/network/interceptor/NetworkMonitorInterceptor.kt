@@ -1,8 +1,6 @@
 package com.sahidev.maknyuss.data.source.network.interceptor
 
 import com.sahidev.maknyuss.data.source.network.monitor.NetworkState
-import com.sahidev.maknyuss.data.source.network.monitor.NoNetworkException
-import com.sahidev.maknyuss.data.utils.Constant.NETWORK_ERROR_MESSAGE
 import okhttp3.CacheControl
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -19,23 +17,15 @@ class NetworkMonitorInterceptor @Inject constructor(
     private val liveNetworkState: NetworkState
 ) : Interceptor {
 
-    @Throws(NoNetworkException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val request: Request = chain.request()
-        val response: Response = chain.proceed(chain.request())
         val builder: Request.Builder = chain.request().newBuilder()
-
-        val cacheAvailable = !response.cacheControl.noCache
 
         return if (liveNetworkState.isConnected()) {
             chain.proceed(request)
         } else {
-            if (cacheAvailable) {
-                builder.cacheControl(CacheControl.FORCE_CACHE)
-                chain.proceed(builder.build())
-            } else {
-                throw NoNetworkException(NETWORK_ERROR_MESSAGE)
-            }
+            builder.cacheControl(CacheControl.FORCE_CACHE)
+            chain.proceed(builder.build())
         }
     }
 }
