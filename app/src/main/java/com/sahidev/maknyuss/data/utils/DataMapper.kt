@@ -149,12 +149,12 @@ object DataMapper {
         }
     }
 
-    private fun ingredientImage(ingredient: String, size: String = "100x100"): String {
+    private fun ingredientImage(ingredient: String?, size: String = "100x100"): String {
 
-        return "https://spoonacular.com/cdn/ingredients_${size}/${ingredient.ifEmpty { "ingredient.jpg" }}"
+        return "https://spoonacular.com/cdn/ingredients_${size}/${ingredient ?: "ingredient.jpg"}"
     }
 
-    private fun equipmentImage(equipment: String, size: String = "100x100"): String {
-        return "https://spoonacular.com/cdn/equipment_${size}/${equipment.ifEmpty { "equipment.jpg" }}"
+    private fun equipmentImage(equipment: String? = "ingredient.jpg", size: String = "100x100"): String {
+        return "https://spoonacular.com/cdn/equipment_${size}/${equipment ?: "equipment.jpg"}"
     }
 }
