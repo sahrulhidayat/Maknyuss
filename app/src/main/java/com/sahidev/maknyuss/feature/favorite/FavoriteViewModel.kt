@@ -22,7 +22,11 @@ class FavoriteViewModel @Inject constructor(
     }
 
     fun onEvent(event: FavoriteEvent) {
-
+        when (event) {
+            FavoriteEvent.RefreshPage -> {
+                getFavoriteRecipe()
+            }
+        }
     }
 
     private fun getFavoriteRecipe() {
@@ -36,5 +40,5 @@ class FavoriteViewModel @Inject constructor(
 }
 
 sealed class FavoriteEvent {
-
+    data object RefreshPage : FavoriteEvent()
 }

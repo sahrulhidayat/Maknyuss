@@ -28,7 +28,6 @@ data class ResultsItem(
     @field:SerializedName("image")
     val image: String?,
 
-
     @field:SerializedName("pricePerServing")
     val pricePerServing: Double,
 

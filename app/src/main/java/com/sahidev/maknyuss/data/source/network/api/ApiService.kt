@@ -17,6 +17,7 @@ interface ApiService {
         @Query("query") query: String,
         @Query("offset") offset: Int = 0,
         @Query("number") number: Int = 10,
+        @Query("addRecipeInformation") addRecipeInfo: Boolean = true,
         @Query("apiKey") apiKey: String = API_KEY,
     ): SearchResponse
 

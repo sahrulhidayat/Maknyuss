@@ -61,6 +61,7 @@ fun FavoriteScreen(
             is Resource.Error -> {
                 ErrorScreen(
                     message = state.message ?: Constant.DEFAULT_ERROR_MESSAGE,
+                    onClickAction = { viewModel.onEvent(FavoriteEvent.RefreshPage) },
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(bottom = padding.calculateBottomPadding())
@@ -96,9 +97,4 @@ fun FavoriteScreen(
             }
         }
     }
-}
-
-@Composable
-fun PriceBreakDown(modifier: Modifier = Modifier) {
-
 }

@@ -251,6 +251,13 @@ fun HomeScreen(
                 is Resource.Error -> {
                     ErrorScreen(
                         message = recipeState.message ?: DEFAULT_ERROR_MESSAGE,
+                        onClickAction = {
+                            if (showingSearchResult) {
+                                viewModel.onEvent(HomeEvent.SearchRecipe(query))
+                            } else {
+                                viewModel.onEvent(HomeEvent.PullRefresh)
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(bottom = padding.calculateBottomPadding())

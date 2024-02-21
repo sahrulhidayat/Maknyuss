@@ -123,6 +123,7 @@ fun InfoScreen(
             is Resource.Error -> {
                 ErrorScreen(
                     message = recipeState.message ?: Constant.DEFAULT_ERROR_MESSAGE,
+                    onClickAction = { viewModel.onEvent(InfoEvent.PullRefresh) },
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(bottom = padding.calculateBottomPadding())
