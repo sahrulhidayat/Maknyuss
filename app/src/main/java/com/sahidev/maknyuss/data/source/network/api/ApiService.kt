@@ -2,6 +2,7 @@ package com.sahidev.maknyuss.data.source.network.api
 
 import com.sahidev.maknyuss.BuildConfig
 import com.sahidev.maknyuss.Secrets
+import com.sahidev.maknyuss.data.source.network.response.PriceBreakDownResponse
 import com.sahidev.maknyuss.data.source.network.response.RecipeInfoResponse
 import com.sahidev.maknyuss.data.source.network.response.RecipesResponse
 import com.sahidev.maknyuss.data.source.network.response.SearchResponse
@@ -31,4 +32,10 @@ interface ApiService {
         @Query("number") number: Int = 10,
         @Query("apiKey") apiKey: String = API_KEY
     ): RecipesResponse
+
+    @GET("recipes/{id}/priceBreakdownWidget.json")
+    suspend fun getPriceBreakDownById(
+        @Path("id") id: Int,
+        @Query("apiKey") apiKey: String = API_KEY
+    ): PriceBreakDownResponse
 }

@@ -40,12 +40,12 @@ class RecipeRepositoryImpl @Inject constructor(
                 return localDataSource.getRecipeInfo(id)
             }
 
-            override suspend fun createCall(): Flow<ApiResponse<RecipeAndInstructions>> {
-                return remoteDataSource.getRecipeInfo(id)
-            }
-
             override fun shouldFetch(data: RecipeAndInstructions?): Boolean {
                 return data?.recipe == null
+            }
+
+            override suspend fun createCall(): Flow<ApiResponse<RecipeAndInstructions>> {
+                return remoteDataSource.getRecipeInfo(id)
             }
         }.asFlow()
     }
@@ -63,7 +63,24 @@ class RecipeRepositoryImpl @Inject constructor(
             override suspend fun createCall(): Flow<ApiResponse<List<Recipe>>> {
                 return remoteDataSource.getRandomRecipes()
             }
+        }.asFlow()
+    }
 
+    override suspend fun getPriceBreakDown(
+        recipeAndInstructions: RecipeAndInstructions
+    ): Flow<Resource<RecipeAndInstructions>> {
+        return object : NetworkBoundResource<RecipeAndInstructions>() {
+            override fun loadFromDB(): Flow<RecipeAndInstructions> {
+                return localDataSource.getRecipeInfo(recipeAndInstructions.recipe.id)
+            }
+
+            override fun shouldFetch(data: RecipeAndInstructions?): Boolean {
+                return data?.recipe?.priceBreakDown?.isEmpty() ?: true
+            }
+
+            override suspend fun createCall(): Flow<ApiResponse<RecipeAndInstructions>> {
+                return remoteDataSource.getPriceBreakDown(recipeAndInstructions)
+            }
         }.asFlow()
     }
 
@@ -80,7 +97,6 @@ class RecipeRepositoryImpl @Inject constructor(
             override suspend fun createCall(): Flow<ApiResponse<List<Recipe>>> {
                 return channelFlow { send(ApiResponse.Empty) }
             }
-
         }.asFlow()
     }
 

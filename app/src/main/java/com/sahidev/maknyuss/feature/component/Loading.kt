@@ -27,7 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.sahidev.maknyuss.feature.util.shimmerEffect
+import com.sahidev.maknyuss.feature.utils.shimmerEffect
 import com.sahidev.maknyuss.ui.theme.backgroundLight
 
 @Composable

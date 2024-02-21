@@ -18,4 +18,13 @@ data class RecipesItem(
 
     @field:SerializedName("image")
     val image: String?,
+
+    @field:SerializedName("pricePerServing")
+    val pricePerServing: Double,
+
+    @field:SerializedName("dishTypes")
+    val dishTypes: List<String>,
+
+    @field:SerializedName("diets")
+    val diets: List<String>,
 )

@@ -17,7 +17,7 @@ data class RecipeInfoResponse(
 	val summary: String,
 
 	@field:SerializedName("pricePerServing")
-	val price: Float,
+	val pricePerServing: Double,
 
 	@field:SerializedName("aggregateLikes")
 	val likes: Int,
@@ -27,6 +27,12 @@ data class RecipeInfoResponse(
 
 	@field:SerializedName("servings")
 	val servings: Int,
+
+	@field:SerializedName("dishTypes")
+	val dishTypes: List<String>,
+
+	@field:SerializedName("diets")
+	val diets: List<String>,
 
 	@field:SerializedName("extendedIngredients")
 	val extendedIngredients: List<ExtendedIngredientsItem>,
@@ -74,7 +80,7 @@ data class StepsItem(
 data class IngredientsItem(
 
 	@field:SerializedName("image")
-	val image: String,
+	val image: String?,
 
 	@field:SerializedName("name")
 	val name: String,
@@ -83,7 +89,7 @@ data class IngredientsItem(
 data class EquipmentItem(
 
 	@field:SerializedName("image")
-	val image: String,
+	val image: String?,
 
 	@field:SerializedName("name")
 	val name: String,

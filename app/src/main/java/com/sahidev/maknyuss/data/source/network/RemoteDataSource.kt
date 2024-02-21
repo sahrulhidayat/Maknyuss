@@ -104,6 +104,31 @@ class RemoteDataSource @Inject constructor(
         }
     }
 
+    suspend fun getPriceBreakDown(recipeAndInstructions: RecipeAndInstructions): Flow<ApiResponse<RecipeAndInstructions>> {
+        return channelFlow {
+            try {
+                val response = apiService.getPriceBreakDownById(recipeAndInstructions.recipe.id)
+                send(
+                    ApiResponse.Success(
+                        DataMapper.mapPriceBreakDownResponseToModel(response, recipeAndInstructions)
+                    )
+                )
+            } catch (exception: Exception) {
+                when (exception) {
+                    is HttpException -> {
+                        Log.e(TAG, "getPriceBreakDown: $exception")
+                        send(ApiResponse.Error(NETWORK_ERROR_MESSAGE))
+                    }
+
+                    else -> {
+                        Log.e(TAG, "getPriceBreakDown: $exception")
+                        send(ApiResponse.Error(exception.toString()))
+                    }
+                }
+            }
+        }
+    }
+
     companion object {
         private const val TAG = "Remote Data Source"
     }

@@ -10,6 +10,10 @@ interface RecipeRepository {
     fun searchRecipe(query: String, offset: Int): Flow<Resource<List<Recipe>>>
     suspend fun getRecipeInfo(id: Int): Flow<Resource<RecipeAndInstructions>>
     suspend fun getRandomRecipe(): Flow<Resource<List<Recipe>>>
+    suspend fun getPriceBreakDown(
+        recipeAndInstructions: RecipeAndInstructions
+    ): Flow<Resource<RecipeAndInstructions>>
+
     fun getSavedRecipes(): Flow<Resource<List<Recipe>>>
     suspend fun addRecipe(recipe: Recipe)
     suspend fun deleteRecipe(recipe: Recipe)

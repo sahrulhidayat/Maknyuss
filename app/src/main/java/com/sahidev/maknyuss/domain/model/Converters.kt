@@ -6,6 +6,21 @@ import com.google.gson.reflect.TypeToken
 
 class Converters {
     @TypeConverter
+    fun listToString(
+        list: List<String>
+    ): String {
+        return Gson().toJson(list)
+    }
+
+    @TypeConverter
+    fun stringToList(
+        data: String
+    ): List<String> {
+        val list = object : TypeToken<List<String>>() {}.type
+        return Gson().fromJson(data, list)
+    }
+
+    @TypeConverter
     fun instructionsToEquipment(
         equipments: List<Equipment>
     ): String {
@@ -33,5 +48,20 @@ class Converters {
     ): List<Ingredient> {
         val ingredients = object : TypeToken<List<Ingredient>>() {}.type
         return Gson().fromJson(data, ingredients)
+    }
+
+    @TypeConverter
+    fun priceBreakDownToString(
+        priceBreakDown: List<Price>
+    ): String {
+        return Gson().toJson(priceBreakDown)
+    }
+
+    @TypeConverter
+    fun stringToPriceBreakDown(
+        data: String
+    ): List<Price> {
+        val priceBreakDown = object : TypeToken<List<Price>>() {}.type
+        return Gson().fromJson(data, priceBreakDown)
     }
 }

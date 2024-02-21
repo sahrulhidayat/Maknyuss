@@ -4,29 +4,96 @@ import com.sahidev.maknyuss.data.source.network.response.AnalyzedInstructionsIte
 import com.sahidev.maknyuss.data.source.network.response.EquipmentItem
 import com.sahidev.maknyuss.data.source.network.response.ExtendedIngredientsItem
 import com.sahidev.maknyuss.data.source.network.response.IngredientsItem
+import com.sahidev.maknyuss.data.source.network.response.PriceBreakDownResponse
 import com.sahidev.maknyuss.data.source.network.response.RecipeInfoResponse
 import com.sahidev.maknyuss.data.source.network.response.RecipesItem
 import com.sahidev.maknyuss.data.source.network.response.ResultsItem
 import com.sahidev.maknyuss.domain.model.Equipment
 import com.sahidev.maknyuss.domain.model.Ingredient
 import com.sahidev.maknyuss.domain.model.Instruction
+import com.sahidev.maknyuss.domain.model.Price
 import com.sahidev.maknyuss.domain.model.Recipe
 import com.sahidev.maknyuss.domain.model.RecipeAndInstructions
 import java.math.RoundingMode
 
 object DataMapper {
 
-    fun mapSearchResponseToModel(input: List<ResultsItem>): List<Recipe> {
+    fun mapRecipesToModel(input: List<RecipesItem>): List<Recipe> {
         return input.map {
+            val pricePerServing = centsToDollars(it.pricePerServing)
             Recipe(
                 it.id,
                 it.title,
                 it.image ?: "https://spoonacular.com/recipeImages/${it.id}-556x370.jpg",
+                pricePerServing.toString(),
+                dishTypes = it.dishTypes,
+                diets = it.diets
             )
         }
     }
 
+    fun mapSearchResponseToModel(input: List<ResultsItem>): List<Recipe> {
+        return input.map {
+            val pricePerServing = centsToDollars(it.pricePerServing)
+            Recipe(
+                it.id,
+                it.title,
+                it.image ?: "https://spoonacular.com/recipeImages/${it.id}-556x370.jpg",
+                pricePerServing.toString(),
+                dishTypes = it.dishTypes,
+                diets = it.diets
+            )
+        }
+    }
+
+    fun mapPriceBreakDownResponseToModel(
+        input: PriceBreakDownResponse,
+        recipeAndInstructions: RecipeAndInstructions
+    ): RecipeAndInstructions {
+        val pricePerServing = centsToDollars(input.totalCostPerServing)
+        val totalCost = centsToDollars(input.totalCost)
+        val priceBreakDown = if (input.ingredients.isNotEmpty()) {
+            input.ingredients.map {
+                val price = centsToDollars(it.price)
+
+                val valueMetric = it.amount.metric.value.toString()
+                val unitMetric = it.amount.metric.unit
+                val valueUs = it.amount.us.value.toString()
+                val unitUs = it.amount.us.unit
+
+                Price(
+                    it.name.capitalize(),
+                    price.toString(),
+                    formatAmount(valueMetric, unitMetric),
+                    formatAmount(valueUs, unitUs),
+                    ingredientImage(it.image)
+                )
+            }
+        } else {
+            emptyList()
+        }
+
+        val recipe = recipeAndInstructions.recipe.copy(
+            pricePerServing = pricePerServing.toString(),
+            totalCost = totalCost.toString(),
+            priceBreakDown = priceBreakDown,
+        )
+
+        return recipeAndInstructions.copy(
+            recipe = recipe
+        )
+    }
+
     fun mapRecipeInfoResponseToModel(input: RecipeInfoResponse): RecipeAndInstructions {
+        val pricePerServing = centsToDollars(input.pricePerServing)
+        val summary = input.summary
+            .dropLast(1)
+            .replaceAfterLast(". ", "")
+            .dropLast(1)
+            .replaceAfterLast(". ", "")
+            .dropLast(1)
+            .replaceAfterLast(". ", "")
+
         val equipments = arrayListOf<Equipment>()
         val instructions = mapRecipeInstructions(
             input.id,
@@ -41,35 +108,27 @@ object DataMapper {
                 }
             }
         }
-        val priceInDollars = (input.price / 100)
-            .toBigDecimal()
-            .setScale(2, RoundingMode.UP)
-            .toDouble()
-
-        val summary = input.summary
-            .dropLast(1)
-            .replaceAfterLast(". ", "")
-            .dropLast(1)
-            .replaceAfterLast(". ", "")
-            .dropLast(1)
-            .replaceAfterLast(". ", "")
 
         val recipe = Recipe(
             input.id,
             input.title,
             input.image ?: "https://spoonacular.com/recipeImages/${input.id}-556x370.jpg",
+            pricePerServing.toString(),
+            totalCost = null,
             summary,
-            priceInDollars.toString(),
             input.likes.toString(),
             input.readyMinutes,
             input.servings,
+            input.dishTypes,
+            input.diets,
             equipments,
-            mapExtendedIngredients(input.extendedIngredients)
+            mapExtendedIngredients(input.extendedIngredients),
+            priceBreakDown = emptyList(),
         )
 
         return RecipeAndInstructions(
             recipe,
-            instructions
+            instructions,
         )
     }
 
@@ -78,15 +137,17 @@ object DataMapper {
     ): List<Ingredient> {
         if (input.isNotEmpty()) {
             return input.map {
-                val amount = it.measures.metric.amount.toString()
-                val unit = it.measures.metric.unitShort
-                val measures = "${amount.trimTrailingZero()} $unit"
+                val valueMetric = it.measures.metric.amount.toString()
+                val unitMetric = it.measures.metric.unitShort
+                val valueUs = it.measures.us.amount.toString()
+                val unitUs = it.measures.us.unitShort
 
                 Ingredient(
                     it.name.capitalize(),
                     ingredientImage(it.image),
                     it.nameClean,
-                    measures
+                    formatAmount(valueMetric, unitMetric),
+                    formatAmount(valueUs, unitUs)
                 )
             }
         } else {
@@ -139,22 +200,27 @@ object DataMapper {
         }
     }
 
-    fun mapRecipesToModel(input: List<RecipesItem>): List<Recipe> {
-        return input.map {
-            Recipe(
-                it.id,
-                it.title,
-                it.image ?: "https://spoonacular.com/recipeImages/${it.id}-556x370.jpg"
-            )
-        }
+    private fun centsToDollars(cents: Double): Double {
+        return (cents / 100)
+            .toBigDecimal()
+            .setScale(2, RoundingMode.CEILING)
+            .toDouble()
     }
 
-    private fun ingredientImage(ingredient: String?, size: String = "100x100"): String {
+    private fun formatAmount(value: String, unit: String): String =
+        "${value.trimTrailingZero()} $unit"
 
-        return "https://spoonacular.com/cdn/ingredients_${size}/${ingredient ?: "ingredient.jpg"}"
+    private fun ingredientImage(
+        ingredient: String? = "ingredient.jpg",
+        size: String = "100x100"
+    ): String {
+        return "https://spoonacular.com/cdn/ingredients_${size}/${ingredient?.ifBlank { "ingredient.jpg" }}"
     }
 
-    private fun equipmentImage(equipment: String? = "ingredient.jpg", size: String = "100x100"): String {
-        return "https://spoonacular.com/cdn/equipment_${size}/${equipment ?: "equipment.jpg"}"
+    private fun equipmentImage(
+        equipment: String? = "equipment.jpg",
+        size: String = "100x100"
+    ): String {
+        return "https://spoonacular.com/cdn/equipment_${size}/${equipment?.ifBlank { "equipment.jpg" }}"
     }
 }

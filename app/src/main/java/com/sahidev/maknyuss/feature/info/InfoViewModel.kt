@@ -18,6 +18,8 @@ class InfoViewModel @Inject constructor(
 ) : ViewModel() {
     var recipeState = mutableStateOf<Resource<RecipeAndInstructions>>(Resource.Loading())
         private set
+    var showPriceBreakDown = mutableStateOf(false)
+        private set
 
     private val recipeId: Int = checkNotNull(savedStateHandle[RECIPE_ID])
 
@@ -49,6 +51,20 @@ class InfoViewModel @Inject constructor(
                 }
             }
 
+            is InfoEvent.ShowPriceBreakDown -> {
+                showPriceBreakDown.value = event.value
+
+                if (event.value) {
+                    viewModelScope.launch {
+                        recipeUseCase
+                            .getPriceBreakDown(recipeState.value.data ?: return@launch)
+                            .collect { data ->
+                                recipeState.value = data
+                            }
+                    }
+                }
+            }
+
             InfoEvent.PullRefresh -> {
                 getRecipeInfo(recipeId)
             }
@@ -67,5 +83,6 @@ class InfoViewModel @Inject constructor(
 
 sealed class InfoEvent {
     data class ToggleFavorite(val value: Boolean, val data: RecipeAndInstructions) : InfoEvent()
+    data class ShowPriceBreakDown(val value: Boolean) : InfoEvent()
     data object PullRefresh : InfoEvent()
 }

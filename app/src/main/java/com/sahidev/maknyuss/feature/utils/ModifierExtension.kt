@@ -1,4 +1,4 @@
-package com.sahidev.maknyuss.feature.util
+package com.sahidev.maknyuss.feature.utils
 
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
