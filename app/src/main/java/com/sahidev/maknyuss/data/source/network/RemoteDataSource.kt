@@ -3,10 +3,12 @@ package com.sahidev.maknyuss.data.source.network
 import android.util.Log
 import com.sahidev.maknyuss.data.source.network.api.ApiResponse
 import com.sahidev.maknyuss.data.source.network.api.ApiService
+import com.sahidev.maknyuss.data.utils.Constant.DEFAULT_ERROR_MESSAGE
 import com.sahidev.maknyuss.data.utils.Constant.NETWORK_ERROR_MESSAGE
 import com.sahidev.maknyuss.data.utils.DataMapper
 import com.sahidev.maknyuss.domain.model.Recipe
 import com.sahidev.maknyuss.domain.model.RecipeAndInstructions
+import com.sahidev.maknyuss.domain.model.Search
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import retrofit2.HttpException
@@ -41,8 +43,8 @@ class RemoteDataSource @Inject constructor(
                     }
 
                     else -> {
-                        send(ApiResponse.Error(exception.toString()))
                         Log.e(TAG, "searchRecipe: $exception")
+                        send(ApiResponse.Error(DEFAULT_ERROR_MESSAGE))
                     }
                 }
             }
@@ -66,8 +68,8 @@ class RemoteDataSource @Inject constructor(
                     }
 
                     else -> {
-                        send(ApiResponse.Error(exception.toString()))
                         Log.e(TAG, "getRecipeInfo: $exception")
+                        send(ApiResponse.Error(DEFAULT_ERROR_MESSAGE))
                     }
                 }
             }
@@ -97,7 +99,7 @@ class RemoteDataSource @Inject constructor(
 
                     else -> {
                         Log.e(TAG, "getRandomRecipes: $exception")
-                        send(ApiResponse.Error(exception.toString()))
+                        send(ApiResponse.Error(DEFAULT_ERROR_MESSAGE))
                     }
                 }
             }
@@ -122,7 +124,32 @@ class RemoteDataSource @Inject constructor(
 
                     else -> {
                         Log.e(TAG, "getPriceBreakDown: $exception")
-                        send(ApiResponse.Error(exception.toString()))
+                        send(ApiResponse.Error(DEFAULT_ERROR_MESSAGE))
+                    }
+                }
+            }
+        }
+    }
+
+    suspend fun getAutoCompleteRecipe(query: String): Flow<ApiResponse<List<Search>>> {
+        return channelFlow {
+            try {
+                val response = apiService.getAutoCompleteSearch(query)
+                send(
+                    ApiResponse.Success(
+                        DataMapper.mapAutoCompleteSearchToModel(response)
+                    )
+                )
+            } catch (exception: Exception) {
+                when (exception) {
+                    is HttpException -> {
+                        Log.e(TAG, "getAutoCompleteRecipe: $exception")
+                        send(ApiResponse.Error(NETWORK_ERROR_MESSAGE))
+                    }
+
+                    else -> {
+                        Log.e(TAG, "getAutoCompleteRecipe: $exception")
+                        send(ApiResponse.Error(DEFAULT_ERROR_MESSAGE))
                     }
                 }
             }

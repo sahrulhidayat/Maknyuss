@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -47,10 +48,11 @@ fun PriceBreakDown(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val sortedPrices = prices.sortedByDescending { it.price }
     val chartInput = remember { mutableStateOf(emptyList<PieChartInput>()) }
-    val isCenterTapped = remember { mutableStateOf(true) }
+    val isCenterTapped = remember { mutableStateOf(false) }
 
-    prices.map { price ->
+    sortedPrices.map { price ->
         val priceValue = (price.price.toDouble() * 100).roundToInt()
         val color = RandomColors.getColor()
         PieChartInput(
@@ -94,37 +96,33 @@ fun PriceBreakDown(
                         centerText = "$${totalPrice}\nTotal"
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-
-
                     LazyColumn {
                         item {
                             FlowRow(
                                 modifier = Modifier,
                                 horizontalArrangement = Arrangement.Center
                             ) {
-                                if (isCenterTapped.value) {
-                                    prices.forEachIndexed { index, price ->
-                                        val color = chartInput.value[index].color
-                                        PriceItem(
-                                            price = price,
-                                            color = color
-                                        )
-                                    }
-                                } else {
-                                    chartInput.value.find { it.isTapped }
-                                        .also { chart ->
-                                            if (chart != null) {
-                                                val color = chart.color
-                                                val price = prices.find {
-                                                    it.ingredientName == chart.description
-                                                }
+                                chartInput.value.find { it.isTapped }
+                                    .also { chart ->
+                                        if (chart == null || isCenterTapped.value) {
+                                            sortedPrices.forEachIndexed { index, price ->
+                                                val color = chartInput.value[index].color
                                                 PriceItem(
                                                     price = price,
                                                     color = color
                                                 )
                                             }
+                                        } else {
+                                            val color = chart.color
+                                            val price = sortedPrices.find {
+                                                it.ingredientName == chart.description
+                                            }
+                                            PriceItem(
+                                                price = price,
+                                                color = color
+                                            )
                                         }
-                                }
+                                    }
                             }
                         }
                     }
@@ -191,7 +189,8 @@ fun PriceItem(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = price.ingredientName,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
             )
             Text(
                 text = price.amountMetric ?: "",

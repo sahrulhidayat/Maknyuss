@@ -123,6 +123,7 @@ fun InfoScreen(
             is Resource.Error -> {
                 ErrorScreen(
                     message = recipeState.message ?: Constant.DEFAULT_ERROR_MESSAGE,
+                    showAction = true,
                     onClickAction = { viewModel.onEvent(InfoEvent.PullRefresh) },
                     modifier = Modifier
                         .fillMaxSize()
@@ -207,7 +208,7 @@ fun InfoColumn(
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .aspectRatio(556f / 370f)
+                            .aspectRatio(480f / 360f)
                             .fillMaxWidth()
                             .onGloballyPositioned { coordinates ->
                                 imageHeightDp =

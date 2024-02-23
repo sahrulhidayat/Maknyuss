@@ -229,5 +229,5 @@ data class PieChartInput(
     val color: Color,
     val value: Int,
     val description: String = "",
-    val isTapped: Boolean = true
+    val isTapped: Boolean = false
 )

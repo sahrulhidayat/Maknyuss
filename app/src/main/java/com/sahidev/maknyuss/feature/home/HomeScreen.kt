@@ -3,14 +3,11 @@ package com.sahidev.maknyuss.feature.home
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -19,26 +16,17 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -49,7 +37,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -57,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahidev.maknyuss.data.utils.Constant.DEFAULT_ERROR_MESSAGE
 import com.sahidev.maknyuss.domain.Resource
 import com.sahidev.maknyuss.domain.model.Recipe
+import com.sahidev.maknyuss.feature.component.AppSearchBar
 import com.sahidev.maknyuss.feature.component.ErrorScreen
 import com.sahidev.maknyuss.feature.component.HomeSkeleton
 import com.sahidev.maknyuss.feature.component.ImageSlide
@@ -69,7 +57,7 @@ import com.sahidev.maknyuss.ui.theme.MaknyussTheme
 import com.sahidev.maknyuss.ui.theme.backgroundLight
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
     onClickItem: (id: Int) -> Unit,
@@ -77,9 +65,9 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val searchHistory = viewModel.searchHistory.value
+    val autoCompleteSearch = viewModel.autoCompleteSearch.value
     val showingSearchResult = viewModel.showingSearchResult.value
-    var query by remember { mutableStateOf("") }
-    var active by remember { mutableStateOf(false) }
+    val query = remember { mutableStateOf("") }
 
     var refreshing by remember { mutableStateOf(false) }
     val pullRefreshState = rememberPullRefreshState(
@@ -87,7 +75,7 @@ fun HomeScreen(
         onRefresh = {
             refreshing = true
             if (showingSearchResult) {
-                viewModel.onEvent(HomeEvent.SearchRecipe(query))
+                viewModel.onEvent(HomeEvent.SearchRecipe(query.value))
             } else {
                 viewModel.onEvent(HomeEvent.PullRefresh)
             }
@@ -153,107 +141,34 @@ fun HomeScreen(
     ) {
         Scaffold(
             topBar = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 4.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    SearchBar(
-                        query = query,
-                        onQueryChange = { query = it },
-                        onSearch = {
-                            viewModel.onEvent(HomeEvent.ShowingSearchResult(true))
-                            viewModel.onEvent(HomeEvent.SearchRecipe(it))
-                            active = false
-                        },
-                        active = active,
-                        onActiveChange = { active = it },
-                        placeholder = {
-                            Text(
-                                text = "Search Recipe",
-                                color = Color.Gray
-                            )
-                        },
-                        leadingIcon = {
-                            if (active) {
-                                IconButton(
-                                    onClick = { active = !active }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                                        contentDescription = "Back icon"
-                                    )
-                                }
-                            } else {
-                                IconButton(
-                                    onClick = { scope.launch { drawerState.open() } }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Menu,
-                                        contentDescription = "Toggle navigation drawer"
-                                    )
-                                }
-                            }
-                        },
-                        trailingIcon = {
-                            if (active && query.isNotEmpty()) {
-                                IconButton(onClick = { query = "" }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Close,
-                                        contentDescription = "Close icon"
-                                    )
-                                }
-                            }
-                        },
-                        colors = SearchBarDefaults.colors(containerColor = Color.White)
-                    ) {
-                        searchHistory.forEach {
-                            Row(
-                                modifier = Modifier
-                                    .clickable {
-                                        viewModel.onEvent(HomeEvent.SearchRecipe(it.query))
-                                        query = it.query
-                                        viewModel.onEvent(HomeEvent.ShowingSearchResult(true))
-                                        active = false
-                                    }
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    modifier = Modifier.padding(8.dp),
-                                    imageVector = Icons.Default.History,
-                                    contentDescription = "History icon"
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = it.query,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                IconButton(
-                                    onClick = {
-                                        viewModel.onEvent(HomeEvent.DeleteSearchHistory(it.query))
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Close,
-                                        contentDescription = "Delete history"
-                                    )
-                                }
-                            }
+                AppSearchBar(
+                    query = query,
+                    searchHistory = searchHistory,
+                    autoCompleteSearch = autoCompleteSearch,
+                    onClearAutoComplete = { viewModel.onEvent(HomeEvent.ClearAutoComplete) },
+                    onQueryChange = { viewModel.onEvent(HomeEvent.InputQuery(it)) },
+                    onSearch = { query ->
+                        viewModel.onEvent(HomeEvent.ShowingSearchResult(true))
+                        viewModel.onEvent(HomeEvent.SearchRecipe(query))
+                    },
+                    onAutoCompleteSearch = { id ->
+                        if (id != null) {
+                            onClickItem(id)
                         }
-                    }
-                }
+                    },
+                    onDeleteSearchHistory = { viewModel.onEvent(HomeEvent.DeleteSearchHistory(it)) },
+                    onMenuClick = { scope.launch { drawerState.open() } }
+                )
             }
         ) { padding ->
             when (val recipeState = viewModel.recipeState.value) {
                 is Resource.Error -> {
                     ErrorScreen(
                         message = recipeState.message ?: DEFAULT_ERROR_MESSAGE,
+                        showAction = !showingSearchResult,
                         onClickAction = {
                             if (showingSearchResult) {
-                                viewModel.onEvent(HomeEvent.SearchRecipe(query))
+                                viewModel.onEvent(HomeEvent.SearchRecipe(query.value))
                             } else {
                                 viewModel.onEvent(HomeEvent.PullRefresh)
                             }
@@ -318,7 +233,6 @@ fun HomeScreen(
             }
         }
     }
-
 }
 
 @Composable

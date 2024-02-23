@@ -10,8 +10,8 @@ data class RecipeInfoResponse(
 	@field:SerializedName("title")
 	val title: String,
 
-	@field:SerializedName("image")
-	val image: String?,
+	@field:SerializedName("imageType")
+	val imageType: String,
 
 	@field:SerializedName("summary")
 	val summary: String,

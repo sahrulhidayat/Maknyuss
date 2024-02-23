@@ -22,19 +22,15 @@ object RepositoryModule {
         localDataSource: LocalDataSource,
         remoteDataSource: RemoteDataSource
     ): RecipeRepository {
-        return RecipeRepositoryImpl(
-            localDataSource,
-            remoteDataSource
-        )
+        return RecipeRepositoryImpl(localDataSource, remoteDataSource)
     }
 
     @Provides
     @Singleton
     fun provideSearchRepository(
-        localDataSource: LocalDataSource
+        localDataSource: LocalDataSource,
+        remoteDataSource: RemoteDataSource
     ): SearchRepository {
-        return SearchRepositoryImpl(
-            localDataSource
-        )
+        return SearchRepositoryImpl(localDataSource, remoteDataSource)
     }
 }

@@ -59,7 +59,7 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe) {
                 contentScale = ContentScale.Crop,
                 alignment = Alignment.TopCenter,
                 modifier = Modifier
-                    .aspectRatio(312f / 231f)
+                    .aspectRatio(480f / 360f)
                     .fillMaxSize()
             )
             Box(

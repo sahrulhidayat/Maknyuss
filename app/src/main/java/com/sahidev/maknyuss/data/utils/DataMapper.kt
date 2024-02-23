@@ -1,6 +1,7 @@
 package com.sahidev.maknyuss.data.utils
 
 import com.sahidev.maknyuss.data.source.network.response.AnalyzedInstructionsItem
+import com.sahidev.maknyuss.data.source.network.response.AutoCompleteResponseItem
 import com.sahidev.maknyuss.data.source.network.response.EquipmentItem
 import com.sahidev.maknyuss.data.source.network.response.ExtendedIngredientsItem
 import com.sahidev.maknyuss.data.source.network.response.IngredientsItem
@@ -14,6 +15,7 @@ import com.sahidev.maknyuss.domain.model.Instruction
 import com.sahidev.maknyuss.domain.model.Price
 import com.sahidev.maknyuss.domain.model.Recipe
 import com.sahidev.maknyuss.domain.model.RecipeAndInstructions
+import com.sahidev.maknyuss.domain.model.Search
 import java.math.RoundingMode
 
 object DataMapper {
@@ -24,7 +26,7 @@ object DataMapper {
             Recipe(
                 it.id,
                 it.title,
-                it.image ?: "https://spoonacular.com/recipeImages/${it.id}-556x370.jpg",
+                recipeImage(it.id, it.imageType, "480x360"),
                 pricePerServing.toString(),
                 dishTypes = it.dishTypes,
                 diets = it.diets
@@ -38,7 +40,7 @@ object DataMapper {
             Recipe(
                 it.id,
                 it.title,
-                it.image ?: "https://spoonacular.com/recipeImages/${it.id}-556x370.jpg",
+                recipeImage(it.id, it.imageType),
                 pricePerServing.toString(),
                 dishTypes = it.dishTypes,
                 diets = it.diets
@@ -112,7 +114,7 @@ object DataMapper {
         val recipe = Recipe(
             input.id,
             input.title,
-            input.image ?: "https://spoonacular.com/recipeImages/${input.id}-556x370.jpg",
+            recipeImage(input.id, input.imageType, "480x360"),
             pricePerServing.toString(),
             totalCost = null,
             summary,
@@ -132,11 +134,28 @@ object DataMapper {
         )
     }
 
+    fun mapAutoCompleteSearchToModel(
+        input: List<AutoCompleteResponseItem>
+    ): List<Search> {
+        return if (input.isNotEmpty()) {
+            input.map {
+                Search(
+                    it.title.capitalize(),
+                    System.currentTimeMillis(),
+                    recipeImage(it.id, it.imageType),
+                    it.id
+                )
+            }
+        } else {
+            emptyList()
+        }
+    }
+
     private fun mapExtendedIngredients(
         input: List<ExtendedIngredientsItem>
     ): List<Ingredient> {
-        if (input.isNotEmpty()) {
-            return input.map {
+        return if (input.isNotEmpty()) {
+            input.map {
                 val valueMetric = it.measures.metric.amount.toString()
                 val unitMetric = it.measures.metric.unitShort
                 val valueUs = it.measures.us.amount.toString()
@@ -151,7 +170,7 @@ object DataMapper {
                 )
             }
         } else {
-            return emptyList()
+            emptyList()
         }
     }
 
@@ -209,6 +228,14 @@ object DataMapper {
 
     private fun formatAmount(value: String, unit: String): String =
         "${value.trimTrailingZero()} $unit"
+
+    private fun recipeImage(
+        id: Int? = 0,
+        imageType: String? = "jpg",
+        aspectRatio: String? = "312x231"
+    ): String {
+        return "https://spoonacular.com/recipeImages/${id}-${aspectRatio}.${imageType}"
+    }
 
     private fun ingredientImage(
         ingredient: String? = "ingredient.jpg",

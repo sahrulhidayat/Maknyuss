@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ErrorScreen(
     message: String,
+    showAction: Boolean,
     modifier: Modifier = Modifier,
     onClickAction: () -> Unit,
     actionMessage: String = "Try Again"
@@ -31,18 +32,20 @@ fun ErrorScreen(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TextButton(
-                onClick = { onClickAction() },
-                shape = RoundedCornerShape(32.dp),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 2.dp)
-            ) {
-                Text(
-                    text = actionMessage,
-                    style = MaterialTheme.typography.titleMedium
-                )
+            if (showAction) {
+                TextButton(
+                    onClick = { onClickAction() },
+                    shape = RoundedCornerShape(32.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = actionMessage,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
             }
-            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = message,
                 textAlign = TextAlign.Center,

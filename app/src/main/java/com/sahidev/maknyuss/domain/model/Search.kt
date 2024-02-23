@@ -8,4 +8,6 @@ data class Search(
     @PrimaryKey
     val query: String,
     val timestamp: Long,
+    val image: String? = null,
+    val id: Int? = null
 )

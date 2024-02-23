@@ -2,6 +2,7 @@ package com.sahidev.maknyuss.data.source.network.api
 
 import com.sahidev.maknyuss.BuildConfig
 import com.sahidev.maknyuss.Secrets
+import com.sahidev.maknyuss.data.source.network.response.AutoCompleteResponseItem
 import com.sahidev.maknyuss.data.source.network.response.PriceBreakDownResponse
 import com.sahidev.maknyuss.data.source.network.response.RecipeInfoResponse
 import com.sahidev.maknyuss.data.source.network.response.RecipesResponse
@@ -16,7 +17,7 @@ interface ApiService {
     suspend fun searchRecipe(
         @Query("query") query: String,
         @Query("offset") offset: Int = 0,
-        @Query("number") number: Int = 10,
+        @Query("number") number: Int = 20,
         @Query("addRecipeInformation") addRecipeInfo: Boolean = true,
         @Query("apiKey") apiKey: String = API_KEY,
     ): SearchResponse
@@ -30,7 +31,7 @@ interface ApiService {
 
     @GET("recipes/random")
     suspend fun getRandomRecipes(
-        @Query("number") number: Int = 10,
+        @Query("number") number: Int = 20,
         @Query("apiKey") apiKey: String = API_KEY
     ): RecipesResponse
 
@@ -39,4 +40,11 @@ interface ApiService {
         @Path("id") id: Int,
         @Query("apiKey") apiKey: String = API_KEY
     ): PriceBreakDownResponse
+
+    @GET("recipes/autocomplete")
+    suspend fun getAutoCompleteSearch(
+        @Query("query") query: String,
+        @Query("number") number: Int = 5,
+        @Query("apiKey") apiKey: String = API_KEY
+    ): List<AutoCompleteResponseItem>
 }

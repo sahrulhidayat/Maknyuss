@@ -9,6 +9,13 @@ import com.sahidev.maknyuss.domain.model.Search
 import com.sahidev.maknyuss.domain.usecase.RecipeUseCase
 import com.sahidev.maknyuss.domain.usecase.SearchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,12 +28,19 @@ class HomeViewModel @Inject constructor(
         private set
     var searchHistory = mutableStateOf<List<Search>>(emptyList())
         private set
+
+    private var searchQuery = MutableStateFlow("")
+    var autoCompleteSearch = mutableStateOf<Resource<List<Search>>>(Resource.Loading())
+        private set
     var showingSearchResult = mutableStateOf(false)
         private set
+
+    private var getAutoCompleteSearchJob: Job? = null
 
     init {
         getRandomRecipes()
         getSearchHistory()
+        getAutoCompleteSearch()
     }
 
     fun onEvent(event: HomeEvent) {
@@ -57,6 +71,14 @@ class HomeViewModel @Inject constructor(
                 showingSearchResult.value = event.value
             }
 
+            is HomeEvent.InputQuery -> {
+                searchQuery.value = event.query
+            }
+
+            HomeEvent.ClearAutoComplete -> {
+                autoCompleteSearch.value = Resource.Loading()
+            }
+
             HomeEvent.ClearSearchHistory -> {
                 viewModelScope.launch {
                     searchUseCase.clearSearchHistory()
@@ -65,6 +87,24 @@ class HomeViewModel @Inject constructor(
 
             HomeEvent.PullRefresh -> {
                 getRandomRecipes()
+            }
+
+        }
+    }
+
+    @OptIn(FlowPreview::class)
+    private fun getAutoCompleteSearch() {
+        getAutoCompleteSearchJob?.cancel()
+
+        viewModelScope.launch {
+            searchQuery.debounce(300).collectLatest { query ->
+                if (query.isNotBlank()) {
+                    getAutoCompleteSearchJob = searchUseCase.getAutoCompleteRecipe(query)
+                        .onEach {
+                            autoCompleteSearch.value = it
+                        }
+                        .launchIn(viewModelScope)
+                }
             }
         }
     }
@@ -92,6 +132,8 @@ sealed class HomeEvent {
     data class SearchRecipe(val query: String, val offset: Int = 0) : HomeEvent()
     data class DeleteSearchHistory(val query: String) : HomeEvent()
     data class ShowingSearchResult(val value: Boolean) : HomeEvent()
+    data class InputQuery(val query: String) : HomeEvent()
+    data object ClearAutoComplete : HomeEvent()
     data object ClearSearchHistory : HomeEvent()
     data object PullRefresh : HomeEvent()
 }
