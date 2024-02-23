@@ -1,5 +1,6 @@
 package com.sahidev.maknyuss.feature.home
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,6 +31,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,9 +40,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahidev.maknyuss.data.utils.Constant.DEFAULT_ERROR_MESSAGE
 import com.sahidev.maknyuss.domain.Resource
@@ -64,6 +69,9 @@ fun HomeScreen(
     navigateToMenu: (item: MenuItem) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    val view = LocalView.current
+    val window = (view.context as Activity).window
+
     val searchHistory = viewModel.searchHistory.value
     val autoCompleteSearch = viewModel.autoCompleteSearch.value
     val showingSearchResult = viewModel.showingSearchResult.value
@@ -84,6 +92,13 @@ fun HomeScreen(
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    DisposableEffect(view) {
+        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+        onDispose {
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+        }
+    }
 
     BackHandler {
         if (showingSearchResult) {

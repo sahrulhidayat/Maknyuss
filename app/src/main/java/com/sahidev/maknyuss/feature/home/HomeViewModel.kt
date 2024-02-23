@@ -47,12 +47,14 @@ class HomeViewModel @Inject constructor(
                             recipeState.value = data
                         }
 
-                    searchUseCase.addSearchHistory(
-                        Search(
-                            event.query,
-                            System.currentTimeMillis()
+                    if (event.query.isNotBlank()) {
+                        searchUseCase.addSearchHistory(
+                            Search(
+                                event.query,
+                                System.currentTimeMillis()
+                            )
                         )
-                    )
+                    }
                 }
             }
 
