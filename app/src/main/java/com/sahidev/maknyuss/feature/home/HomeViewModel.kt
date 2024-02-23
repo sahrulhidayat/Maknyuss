@@ -10,12 +10,9 @@ import com.sahidev.maknyuss.domain.usecase.RecipeUseCase
 import com.sahidev.maknyuss.domain.usecase.SearchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,12 +27,10 @@ class HomeViewModel @Inject constructor(
         private set
 
     private var searchQuery = MutableStateFlow("")
-    var autoCompleteSearch = mutableStateOf<Resource<List<Search>>>(Resource.Loading())
+    var autoCompleteSearch = mutableStateOf<Resource<List<Search>>>(Resource.Success(emptyList()))
         private set
     var showingSearchResult = mutableStateOf(false)
         private set
-
-    private var getAutoCompleteSearchJob: Job? = null
 
     init {
         getRandomRecipes()
@@ -76,7 +71,7 @@ class HomeViewModel @Inject constructor(
             }
 
             HomeEvent.ClearAutoComplete -> {
-                autoCompleteSearch.value = Resource.Loading()
+                autoCompleteSearch.value = Resource.Success(emptyList())
             }
 
             HomeEvent.ClearSearchHistory -> {
@@ -94,16 +89,13 @@ class HomeViewModel @Inject constructor(
 
     @OptIn(FlowPreview::class)
     private fun getAutoCompleteSearch() {
-        getAutoCompleteSearchJob?.cancel()
-
         viewModelScope.launch {
             searchQuery.debounce(300).collectLatest { query ->
                 if (query.isNotBlank()) {
-                    getAutoCompleteSearchJob = searchUseCase.getAutoCompleteRecipe(query)
-                        .onEach {
+                    searchUseCase.getAutoCompleteRecipe(query)
+                        .collectLatest {
                             autoCompleteSearch.value = it
                         }
-                        .launchIn(viewModelScope)
                 }
             }
         }

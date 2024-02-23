@@ -3,6 +3,7 @@ package com.sahidev.maknyuss.feature.component
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +35,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -48,7 +51,7 @@ import com.sahidev.maknyuss.domain.model.Recipe
 fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe) {
     Card(
         modifier = modifier
-            .height(200.dp)
+            .height(250.dp)
             .padding(3.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -62,23 +65,91 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe) {
                     .aspectRatio(480f / 360f)
                     .fillMaxSize()
             )
-            Box(
+            Column(
                 modifier = modifier
                     .fillMaxWidth()
-                    .height(70.dp)
+                    .height(120.dp)
                     .background(
                         color = MaterialTheme.colorScheme.surface,
                         shape = RoundedCornerShape(8.dp)
                     )
+                    .padding(6.dp)
                     .align(Alignment.BottomCenter)
             ) {
-                Text(
-                    text = recipe.title,
-                    style = MaterialTheme.typography.titleSmall,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(6.dp)
-                )
+                Spacer(modifier = Modifier.size(2.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(32.dp),
+                ) {
+                    Text(
+                        text = recipe.title,
+                        style = MaterialTheme.typography.titleSmall,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                Spacer(modifier = Modifier.size(2.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "$${recipe.pricePerServing ?: "-"}",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "per serving",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+                Spacer(modifier = Modifier.size(2.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val dishTypes = recipe.dishTypes.take(2)
+                    dishTypes.forEach { distType ->
+                        Box(
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .border(1.dp, MaterialTheme.colorScheme.primary)
+                                .padding(vertical = 2.dp, horizontal = 4.dp)
+                        ) {
+                            Text(
+                                text = distType,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val diets = recipe.diets.take(2)
+                    diets.forEach { diet ->
+                        Box(
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .border(1.dp, MaterialTheme.colorScheme.primary)
+                                .padding(vertical = 2.dp, horizontal = 4.dp)
+                        ) {
+                            Text(
+                                text = diet,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                }
             }
         }
     }

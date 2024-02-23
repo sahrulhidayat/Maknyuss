@@ -148,8 +148,10 @@ fun HomeScreen(
                     onClearAutoComplete = { viewModel.onEvent(HomeEvent.ClearAutoComplete) },
                     onQueryChange = { viewModel.onEvent(HomeEvent.InputQuery(it)) },
                     onSearch = { query ->
-                        viewModel.onEvent(HomeEvent.ShowingSearchResult(true))
-                        viewModel.onEvent(HomeEvent.SearchRecipe(query))
+                        if (query.isNotBlank()) {
+                            viewModel.onEvent(HomeEvent.ShowingSearchResult(true))
+                            viewModel.onEvent(HomeEvent.SearchRecipe(query))
+                        }
                     },
                     onAutoCompleteSearch = { id ->
                         if (id != null) {

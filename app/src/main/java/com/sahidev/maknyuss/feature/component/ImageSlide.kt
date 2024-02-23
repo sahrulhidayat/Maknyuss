@@ -22,6 +22,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -150,6 +151,9 @@ fun IndicatorDots(isSelected: Boolean, modifier: Modifier) {
             .padding(2.dp)
             .size(6.dp)
             .clip(CircleShape)
-            .background(if (isSelected) Color(0xFF38992F) else Color(0xFF83B87F))
+            .background(
+                if (isSelected) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.primary.copy(0.5f)
+            )
     )
 }
