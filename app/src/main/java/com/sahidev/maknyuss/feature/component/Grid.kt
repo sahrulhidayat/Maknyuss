@@ -1,7 +1,6 @@
 package com.sahidev.maknyuss.feature.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -28,7 +27,7 @@ fun RecipeGrid(
         items(data) { recipe ->
             RecipeCard(
                 recipe = recipe,
-                modifier = Modifier.clickable { onClickItem(recipe.id) }
+                onClickItem = { onClickItem(recipe.id) }
             )
         }
     }

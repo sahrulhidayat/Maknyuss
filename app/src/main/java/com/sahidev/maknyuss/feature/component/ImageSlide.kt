@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -47,7 +46,7 @@ fun ImageSlide(
     val pagerState = rememberPagerState(pageCount = { data.size })
     LaunchedEffect(Unit) {
         while (true) {
-            delay(3000)
+            delay(5000)
             val nextPage = (pagerState.currentPage + 1) % pagerState.pageCount
             pagerState.animateScrollToPage(nextPage)
         }
@@ -65,15 +64,16 @@ fun ImageSlide(
                 Card(
                     modifier = modifier
                         .wrapContentSize()
-                        .padding(4.dp)
-                        .clickable { onClick(data[pagerState.currentPage].id) },
+                        .padding(4.dp),
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     AsyncImage(
                         model = data[index].image,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        modifier = modifier.aspectRatio(480f / 360f)
+                        modifier = modifier
+                            .aspectRatio(480f / 360f)
+                            .clickable { onClick(data[pagerState.currentPage].id) }
                     )
                 }
             }
@@ -87,8 +87,7 @@ fun ImageSlide(
                     }
                 },
                 modifier = modifier
-                    .padding(8.dp)
-                    .size(40.dp)
+                    .padding(4.dp)
                     .align(Alignment.CenterEnd)
                     .clip(CircleShape)
             ) {
@@ -96,7 +95,9 @@ fun ImageSlide(
                     imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = modifier.fillMaxSize()
+                    modifier = modifier
+                        .clip(CircleShape)
+                        .background(Color.DarkGray.copy(0.4f))
                 )
             }
             IconButton(
@@ -109,8 +110,7 @@ fun ImageSlide(
                     }
                 },
                 modifier = modifier
-                    .padding(8.dp)
-                    .size(40.dp)
+                    .padding(4.dp)
                     .align(Alignment.CenterStart)
                     .clip(CircleShape)
             ) {
@@ -118,7 +118,9 @@ fun ImageSlide(
                     imageVector = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = modifier.fillMaxSize()
+                    modifier = modifier
+                        .clip(CircleShape)
+                        .background(Color.DarkGray.copy(0.4f))
                 )
             }
         }

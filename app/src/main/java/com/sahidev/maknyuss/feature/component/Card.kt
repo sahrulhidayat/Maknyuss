@@ -48,14 +48,22 @@ import com.sahidev.maknyuss.domain.model.Instruction
 import com.sahidev.maknyuss.domain.model.Recipe
 
 @Composable
-fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe) {
+fun RecipeCard(
+    recipe: Recipe,
+    onClickItem: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier
-            .height(250.dp)
-            .padding(3.dp),
+            .padding(3.dp)
+            .height(250.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable { onClickItem() }
+        ) {
             AsyncImage(
                 model = recipe.image,
                 contentDescription = null,

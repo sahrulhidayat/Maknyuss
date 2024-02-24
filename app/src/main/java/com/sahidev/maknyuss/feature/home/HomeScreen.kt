@@ -3,7 +3,6 @@ package com.sahidev.maknyuss.feature.home
 import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -276,7 +275,7 @@ fun HomeGrid(
         items(data) { recipe ->
             RecipeCard(
                 recipe = recipe,
-                modifier = Modifier.clickable { onClickItem(recipe.id) }
+                onClickItem = { onClickItem(recipe.id) }
             )
         }
     }
@@ -287,8 +286,22 @@ fun HomeGrid(
 fun Preview() {
     MaknyussTheme {
         val recipes = listOf(
-            Recipe(1, "Recipe 1", "image"),
-            Recipe(2, "Recipe 2", "image")
+            Recipe(
+                0,
+                "Recipe 1",
+                "image",
+                pricePerServing = "3",
+                dishTypes = listOf("tag 1", "tag 2"),
+                diets = listOf("tag 1", "tag 2")
+            ),
+            Recipe(
+                1,
+                "Recipe 2",
+                "image",
+                pricePerServing = "3",
+                dishTypes = listOf("tag 1", "tag 2"),
+                diets = listOf("tag 1", "tag 2")
+            ),
         )
 
         MaknyussTheme {

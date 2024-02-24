@@ -405,18 +405,25 @@ fun InfoColumn(
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Bon Appetit \uD83D\uDC4C")
+                    Text(
+                        text = "Maknyuss \uD83D\uDC4C",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
-        item {
-            TagsRow(
-                dishTypes = data.recipe.dishTypes,
-                diets = data.recipe.diets
-            )
+        if (data.recipe.dishTypes.isNotEmpty() || data.recipe.diets.isNotEmpty()) {
+            item {
+                TagsRow(
+                    dishTypes = data.recipe.dishTypes,
+                    diets = data.recipe.diets
+                )
+            }
         }
     }
 }
