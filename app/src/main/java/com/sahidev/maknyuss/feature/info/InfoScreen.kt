@@ -3,10 +3,12 @@ package com.sahidev.maknyuss.feature.info
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -27,10 +29,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.Recommend
 import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -56,11 +59,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.sahidev.maknyuss.data.utils.Constant
 import com.sahidev.maknyuss.domain.Resource
+import com.sahidev.maknyuss.domain.model.Instruction
+import com.sahidev.maknyuss.domain.model.Recipe
 import com.sahidev.maknyuss.domain.model.RecipeAndInstructions
 import com.sahidev.maknyuss.feature.component.CircularLoading
 import com.sahidev.maknyuss.feature.component.EquipmentCard
@@ -69,6 +78,7 @@ import com.sahidev.maknyuss.feature.component.HtmlText
 import com.sahidev.maknyuss.feature.component.IngredientCard
 import com.sahidev.maknyuss.feature.component.InstructionCard
 import com.sahidev.maknyuss.feature.component.PriceBreakDown
+import com.sahidev.maknyuss.ui.theme.MaknyussTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -223,14 +233,47 @@ fun InfoColumn(
                             color = MaterialTheme.colorScheme.background,
                             shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
                         )
-                        .padding(8.dp)
+                        .padding(horizontal = 12.dp)
                 ) {
+                    Spacer(modifier = Modifier.size(12.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Text(
+                            text = data.recipe.title,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "$${data.recipe.pricePerServing}",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(modifier = Modifier.size(8.dp))
+                        Text(
+                            text = "per serving",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        IconButton(
+                            onClick = { onPriceClick() }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Info,
+                                contentDescription = "Open price breakdown",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
                         if (data.recipe.favorite) {
-                            IconButton(onClick = { toggleFavorite(false) }) {
+                            IconButton(
+                                onClick = { toggleFavorite(false) }
+                            ) {
                                 Icon(
                                     imageVector = Icons.Default.Favorite,
                                     contentDescription = "Toggle favorite",
@@ -245,43 +288,21 @@ fun InfoColumn(
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = data.recipe.title,
-                            style = MaterialTheme.typography.titleMedium
-                        )
+                        IconButton(onClick = { TODO("Implement share button") }) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = "Share recipe",
+                            )
+                        }
                     }
+                    Spacer(modifier = Modifier.width(4.dp))
                     LazyRow(
                         modifier = Modifier
-                            .padding(vertical = 10.dp)
+                            .padding(vertical = 4.dp)
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         item {
-                            Row(
-                                modifier = Modifier
-                                    .clickable { onPriceClick() }
-                                    .background(
-                                        color = MaterialTheme.colorScheme.secondaryContainer,
-                                        shape = RoundedCornerShape(24.dp)
-                                    )
-                                    .padding(horizontal = 6.dp, vertical = 4.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.MonetizationOn,
-                                    contentDescription = "Price per serving",
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = "${data.recipe.pricePerServing} per serving",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.primary,
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
                             Row(
                                 modifier = Modifier
                                     .background(
@@ -347,15 +368,16 @@ fun InfoColumn(
                         }
                     }
                     HtmlText(html = data.recipe.summary ?: "<b>No descriptions</b>")
-                    Spacer(modifier = Modifier.size(4.dp))
+                    Spacer(modifier = Modifier.size(8.dp))
                     IngredientCard(ingredients = data.recipe.ingredients)
-                    Spacer(modifier = Modifier.size(6.dp))
+                    Spacer(modifier = Modifier.size(8.dp))
                     EquipmentCard(equipments = data.recipe.equipments)
-                    Spacer(modifier = Modifier.size(4.dp))
+                    Spacer(modifier = Modifier.size(8.dp))
                     Text(
                         text = "Instructions:",
                         style = MaterialTheme.typography.titleMedium
                     )
+                    Spacer(modifier = Modifier.size(8.dp))
                     if (data.instructions.isEmpty()) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Column(
@@ -380,15 +402,107 @@ fun InfoColumn(
                 InstructionCard(instruction = instruction)
             }
             item {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(text = "Bon Appetit \uD83D\uDC4C")
                 }
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
+        item {
+            TagsRow(
+                dishTypes = data.recipe.dishTypes,
+                diets = data.recipe.diets
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun TagsRow(dishTypes: List<String>, diets: List<String>, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+    ) {
+        Text(
+            text = "Tags:",
+            style = MaterialTheme.typography.titleMedium
+        )
+        Spacer(modifier = Modifier.size(4.dp))
+        FlowRow(
+            modifier = modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            dishTypes.forEach { dishType ->
+                Box(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                        .padding(vertical = 2.dp, horizontal = 4.dp)
+                ) {
+                    Text(
+                        text = dishType,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        maxLines = 1,
+                    )
+                }
+            }
+            diets.forEach { diet ->
+                Box(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                        .padding(vertical = 2.dp, horizontal = 4.dp)
+                ) {
+                    Text(
+                        text = diet,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        maxLines = 1,
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.size(12.dp))
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun InfoScreenPreview(@PreviewParameter(LoremIpsum::class) lorem: String) {
+    val dummyData = RecipeAndInstructions(
+        recipe = Recipe(
+            0,
+            lorem.take(50),
+            "image",
+            pricePerServing = "2",
+            summary = lorem.take(100),
+            likes = "10",
+            readyMinutes = 20,
+            servings = 3,
+            dishTypes = listOf("tag 1", "tag 2", "tag 3"),
+            diets = listOf("tag 1", "tag 2", "tag 3"),
+            favorite = true
+        ),
+        instructions = listOf(
+            Instruction(1, lorem.take(100), emptyList(), emptyList(), 0)
+        )
+    )
+    MaknyussTheme {
+        InfoColumn(data = dummyData, toggleFavorite = { }, onPriceClick = { })
     }
 }

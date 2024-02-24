@@ -32,7 +32,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -283,7 +282,7 @@ fun HomeGrid(
     }
 }
 
-@Preview
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun Preview() {
     MaknyussTheme {

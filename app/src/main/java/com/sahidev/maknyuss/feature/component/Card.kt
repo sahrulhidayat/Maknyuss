@@ -114,8 +114,11 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe) {
                         Box(
                             modifier = Modifier
                                 .padding(2.dp)
-                                .clip(RoundedCornerShape(4.dp))
-                                .border(1.dp, MaterialTheme.colorScheme.primary)
+                                .border(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    shape = RoundedCornerShape(4.dp)
+                                )
                                 .padding(vertical = 2.dp, horizontal = 4.dp)
                         ) {
                             Text(
@@ -137,7 +140,11 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe) {
                             modifier = Modifier
                                 .padding(2.dp)
                                 .clip(RoundedCornerShape(4.dp))
-                                .border(1.dp, MaterialTheme.colorScheme.primary)
+                                .border(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    shape = RoundedCornerShape(4.dp)
+                                )
                                 .padding(vertical = 2.dp, horizontal = 4.dp)
                         ) {
                             Text(
@@ -313,7 +320,7 @@ fun InstructionCard(
 
     Card(
         modifier = modifier
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = 12.dp, vertical = 4.dp)
             .animateContentSize()
             .clickable {
                 expanded = !expanded

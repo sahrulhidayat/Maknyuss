@@ -104,7 +104,7 @@ fun SlideSkeleton(modifier: Modifier = Modifier) {
                 modifier = modifier
                     .shimmerEffect()
                     .fillMaxSize()
-                    .aspectRatio(312f / 231f)
+                    .aspectRatio(480f / 360f)
             )
         }
     }
@@ -114,7 +114,7 @@ fun SlideSkeleton(modifier: Modifier = Modifier) {
 fun RecipeCardSkeleton(modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
-            .height(200.dp)
+            .height(250.dp)
             .padding(3.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -124,12 +124,12 @@ fun RecipeCardSkeleton(modifier: Modifier = Modifier) {
                     .shimmerEffect()
                     .fillMaxHeight()
                     .align(Alignment.TopCenter)
-                    .aspectRatio(240f / 150f)
+                    .aspectRatio(480f / 360f)
             )
             Column(
                 modifier = modifier
                     .fillMaxWidth()
-                    .height(70.dp)
+                    .height(120.dp)
                     .background(
                         color = MaterialTheme.colorScheme.surface,
                         shape = RoundedCornerShape(8.dp)

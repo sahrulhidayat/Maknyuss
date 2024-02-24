@@ -47,7 +47,7 @@ fun ImageSlide(
     val pagerState = rememberPagerState(pageCount = { data.size })
     LaunchedEffect(Unit) {
         while (true) {
-            delay(5000)
+            delay(3000)
             val nextPage = (pagerState.currentPage + 1) % pagerState.pageCount
             pagerState.animateScrollToPage(nextPage)
         }
@@ -73,7 +73,7 @@ fun ImageSlide(
                         model = data[index].image,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        modifier = modifier.aspectRatio(312f / 231f)
+                        modifier = modifier.aspectRatio(480f / 360f)
                     )
                 }
             }
