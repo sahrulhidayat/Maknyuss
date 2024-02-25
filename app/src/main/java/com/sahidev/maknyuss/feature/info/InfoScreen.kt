@@ -57,6 +57,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -86,6 +87,8 @@ fun InfoScreen(
     onBack: () -> Unit,
     viewModel: InfoViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         snapAnimationSpec = spring(stiffness = Spring.StiffnessHigh)
     )
@@ -168,6 +171,12 @@ fun InfoScreen(
                         onPriceClick = {
                             viewModel.onEvent(InfoEvent.ShowPriceBreakDown(true))
                         },
+                        onShareRecipe = {
+                            val id = data.recipe.id
+                            val title = data.recipe.title
+                            val image = data.recipe.image
+                            viewModel.onEvent(InfoEvent.ShareRecipe(context, id, title, image))
+                        },
                         modifier = Modifier.fillMaxSize()
                     )
                     if (data.recipe.priceBreakDown.isNotEmpty() && showPriceBreakDown) {
@@ -198,6 +207,7 @@ fun InfoColumn(
     data: RecipeAndInstructions,
     toggleFavorite: (Boolean) -> Unit,
     onPriceClick: () -> Unit,
+    onShareRecipe: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val localDensity = LocalDensity.current
@@ -288,7 +298,7 @@ fun InfoColumn(
                                 )
                             }
                         }
-                        IconButton(onClick = { TODO("Implement share button") }) {
+                        IconButton(onClick = { onShareRecipe() }) {
                             Icon(
                                 imageVector = Icons.Default.Share,
                                 contentDescription = "Share recipe",
@@ -510,6 +520,6 @@ fun InfoScreenPreview(@PreviewParameter(LoremIpsum::class) lorem: String) {
         )
     )
     MaknyussTheme {
-        InfoColumn(data = dummyData, toggleFavorite = { }, onPriceClick = { })
+        InfoColumn(data = dummyData, toggleFavorite = { }, onPriceClick = { }, onShareRecipe = { })
     }
 }

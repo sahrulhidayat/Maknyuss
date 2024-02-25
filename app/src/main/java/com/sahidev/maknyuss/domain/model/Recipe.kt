@@ -10,7 +10,7 @@ data class Recipe(
     @PrimaryKey
     val id: Int,
     val title: String,
-    val image: String? = null,
+    val image: String,
     val pricePerServing: String? = null,
     val totalCost: String? = null,
     val summary: String? = null,
