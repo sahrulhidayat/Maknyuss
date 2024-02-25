@@ -47,7 +47,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahidev.maknyuss.data.utils.Constant.DEFAULT_ERROR_MESSAGE
 import com.sahidev.maknyuss.domain.Resource
 import com.sahidev.maknyuss.domain.model.Recipe
-import com.sahidev.maknyuss.feature.component.AppSearchBar
+import com.sahidev.maknyuss.feature.component.MaknyussSearchBar
 import com.sahidev.maknyuss.feature.component.ErrorScreen
 import com.sahidev.maknyuss.feature.component.HomeSkeleton
 import com.sahidev.maknyuss.feature.component.ImageSlide
@@ -154,7 +154,7 @@ fun HomeScreen(
     ) {
         Scaffold(
             topBar = {
-                AppSearchBar(
+                MaknyussSearchBar(
                     query = query,
                     searchHistory = searchHistory,
                     autoCompleteSearch = autoCompleteSearch,

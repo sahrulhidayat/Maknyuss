@@ -42,10 +42,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -80,6 +84,7 @@ import com.sahidev.maknyuss.feature.component.IngredientCard
 import com.sahidev.maknyuss.feature.component.InstructionCard
 import com.sahidev.maknyuss.feature.component.PriceBreakDown
 import com.sahidev.maknyuss.ui.theme.MaknyussTheme
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -103,6 +108,20 @@ fun InfoScreen(
             viewModel.onEvent(InfoEvent.PullRefresh)
         }
     )
+
+    val snackBarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is UiEvent.ShowSnackBar -> {
+                    snackBarHostState.showSnackbar(
+                        message = event.message,
+                        duration = SnackbarDuration.Short
+                    )
+                }
+            }
+        }
+    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -130,7 +149,8 @@ fun InfoScreen(
                     scrollBehavior = scrollBehavior
                 )
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(snackBarHostState) }
     ) { padding ->
         when (val recipeState = viewModel.recipeState.value) {
             is Resource.Error -> {

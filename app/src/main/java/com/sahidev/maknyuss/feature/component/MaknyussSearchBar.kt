@@ -48,7 +48,7 @@ import com.sahidev.maknyuss.domain.model.Search
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppSearchBar(
+fun MaknyussSearchBar(
     query: MutableState<String>,
     searchHistory: List<Search>,
     autoCompleteSearch: Resource<List<Search>>,

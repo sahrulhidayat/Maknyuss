@@ -12,6 +12,7 @@ import com.sahidev.maknyuss.domain.Resource
 import com.sahidev.maknyuss.domain.model.RecipeAndInstructions
 import com.sahidev.maknyuss.domain.usecase.RecipeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,6 +28,9 @@ class InfoViewModel @Inject constructor(
         private set
 
     private val recipeId: Int = checkNotNull(savedStateHandle[RECIPE_ID])
+
+    var eventFlow = MutableSharedFlow<UiEvent>()
+        private set
 
     init {
         getRecipeInfo(recipeId)
@@ -49,9 +53,15 @@ class InfoViewModel @Inject constructor(
                             recipeUseCase.addInstruction(instruction)
                         }
                         getRecipeInfo(recipeId)
+                        eventFlow.emit(
+                            UiEvent.ShowSnackBar("Successfully added to favorites")
+                        )
                     } else {
                         recipeUseCase.deleteRecipe(recipe)
                         getRecipeInfo(recipeId)
+                        eventFlow.emit(
+                            UiEvent.ShowSnackBar("Successfully removed from favorites")
+                        )
                     }
                 }
             }
@@ -84,8 +94,8 @@ class InfoViewModel @Inject constructor(
                         )
                     }
 
-                    val text = "Hey, I have found an interesting recipe:\n\n*${event.title}*\n" +
-                            "\nWanna try cooking it? Get the recipe from Maknyuss App. Download from PlayStore:" +
+                    val text = "Hey, I have found this delicious recipe:\n\n*${event.title}*\n" +
+                            "\nGet the recipe from Maknyuss App. Download from PlayStore:" +
                             "\nhttps://play.google.com/store/apps/details?id=com.sahidev.maknyuss"
 
                     val sendIntent: Intent = Intent().apply {
@@ -93,6 +103,7 @@ class InfoViewModel @Inject constructor(
                         putExtra(Intent.EXTRA_STREAM, imageUri)
                         type = "image/jpeg"
                         flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        putExtra(Intent.EXTRA_TITLE, event.title)
                         putExtra(Intent.EXTRA_TEXT, text)
                     }
                     val shareIntent = Intent.createChooser(sendIntent, null)
@@ -115,6 +126,10 @@ class InfoViewModel @Inject constructor(
                 }
         }
     }
+}
+
+sealed class UiEvent {
+    data class ShowSnackBar(val message: String, val actionLabel: String? = null) : UiEvent()
 }
 
 sealed class InfoEvent {
