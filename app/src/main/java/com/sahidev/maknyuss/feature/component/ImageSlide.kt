@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -54,9 +55,12 @@ fun ImageSlide(
     val scope = rememberCoroutineScope()
 
     Column(
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(modifier = modifier.wrapContentSize()) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
             HorizontalPager(
                 state = pagerState,
                 modifier = modifier.wrapContentSize()
@@ -86,18 +90,17 @@ fun ImageSlide(
                         }
                     }
                 },
-                modifier = modifier
-                    .padding(4.dp)
+                modifier = Modifier
+                    .padding(8.dp)
                     .align(Alignment.CenterEnd)
-                    .clip(CircleShape)
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = modifier
-                        .clip(CircleShape)
-                        .background(Color.DarkGray.copy(0.4f))
+                    modifier = Modifier
+                        .size(32.dp)
+                        .background(Color.DarkGray.copy(0.4f), CircleShape)
                 )
             }
             IconButton(
@@ -109,18 +112,17 @@ fun ImageSlide(
                         }
                     }
                 },
-                modifier = modifier
-                    .padding(4.dp)
+                modifier = Modifier
+                    .padding(8.dp)
                     .align(Alignment.CenterStart)
-                    .clip(CircleShape)
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = modifier
-                        .clip(CircleShape)
-                        .background(Color.DarkGray.copy(0.4f))
+                    modifier = Modifier
+                        .size(32.dp)
+                        .background(Color.DarkGray.copy(0.4f), CircleShape)
                 )
             }
         }

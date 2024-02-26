@@ -1,7 +1,6 @@
 package com.sahidev.maknyuss.ui.theme
 
 import android.app.Activity
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -18,19 +17,18 @@ import androidx.core.view.WindowCompat
 )*/
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
+    primary = Green,
+    secondary = DarkGreen,
+    secondaryContainer = LightGray,
+    tertiary = LightGray,
     background = Color(0xFFFFFBFE),
     surface = Color(0xFFFFFBFE),
     onPrimary = Color.White,
     onSecondary = Color.White,
+    onSecondaryContainer = DarkGray,
     onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    onBackground = Black,
+    onSurface = Black
 )
 
 @Composable

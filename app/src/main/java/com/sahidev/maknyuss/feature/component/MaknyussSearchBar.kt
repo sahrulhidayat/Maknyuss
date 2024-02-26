@@ -1,6 +1,7 @@
 package com.sahidev.maknyuss.feature.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.automirrored.filled.Launch
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,6 +42,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.sahidev.maknyuss.data.utils.Constant
@@ -167,84 +170,119 @@ fun MaknyussSearchBar(
                 }
 
                 is Resource.Success -> {
-                    if (autoCompleteSearch.data?.isEmpty() == true) {
-                        searchHistory.forEach { search ->
+                    val queryBlank = query.value.isBlank()
+                    val autoCompleteEmpty = autoCompleteSearch.data?.isEmpty() == true
+                    Column(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        if (!queryBlank) {
                             Row(
                                 modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth()
+                                    .border(
+                                        width = 1.dp,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
                                     .clickable {
-                                        onSearch(search.query)
-                                        query.value = search.query
+                                        onSearch(query.value)
                                         active = false
                                     }
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp),
+                                    .padding(8.dp),
+                                horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    modifier = Modifier.padding(8.dp),
-                                    imageVector = Icons.Default.History,
-                                    contentDescription = "History icon"
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = "Search"
                                 )
-                                Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = search.query,
-                                    modifier = Modifier.weight(1f)
+                                    text = "Search \"${query.value}\"",
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
-                                IconButton(
-                                    onClick = {
-                                        onDeleteSearchHistory(search.query)
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Close,
-                                        contentDescription = "Delete history"
-                                    )
-                                }
                             }
                         }
-                    } else {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(top = 4.dp)
-                        ) {
-                            autoCompleteSearch.data?.forEach {
+                        if (autoCompleteEmpty) {
+                            searchHistory.forEach { search ->
                                 Row(
                                     modifier = Modifier
                                         .clickable {
-                                            onAutoCompleteSearch(it.id)
-                                            query.value = it.query
+                                            onSearch(search.query)
+                                            query.value = search.query
                                             active = false
                                         }
                                         .fillMaxWidth()
                                         .padding(horizontal = 8.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .size(150.dp, 100.dp)
-                                    ) {
-                                        AsyncImage(
-                                            model = it.image,
-                                            contentDescription = null,
-                                            contentScale = ContentScale.Crop,
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .aspectRatio(312f / 231f)
-                                        )
-                                    }
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = it.query,
-                                        modifier = Modifier.weight(1f)
-                                    )
                                     Icon(
                                         modifier = Modifier.padding(8.dp),
-                                        imageVector = Icons.AutoMirrored.Default.Launch,
-                                        contentDescription = "Launch icon"
+                                        imageVector = Icons.Default.History,
+                                        contentDescription = "History icon"
                                     )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = search.query,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    IconButton(
+                                        onClick = {
+                                            onDeleteSearchHistory(search.query)
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Close,
+                                            contentDescription = "Delete history"
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        if (!autoCompleteEmpty && !queryBlank) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                            ) {
+                                autoCompleteSearch.data?.forEach {
+                                    Row(
+                                        modifier = Modifier
+                                            .clickable {
+                                                onAutoCompleteSearch(it.id)
+                                                query.value = it.query
+                                                active = false
+                                            }
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .size(150.dp, 100.dp)
+                                        ) {
+                                            AsyncImage(
+                                                model = it.image,
+                                                contentDescription = null,
+                                                contentScale = ContentScale.Crop,
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .aspectRatio(312f / 231f)
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = it.query,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Icon(
+                                            modifier = Modifier.padding(8.dp),
+                                            imageVector = Icons.AutoMirrored.Default.Launch,
+                                            contentDescription = "Launch icon"
+                                        )
+                                    }
                                 }
                             }
                         }

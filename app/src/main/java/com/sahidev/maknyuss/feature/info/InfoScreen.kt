@@ -345,12 +345,14 @@ fun InfoColumn(
                                 Icon(
                                     imageVector = Icons.Default.Timer,
                                     contentDescription = "Ready minutes",
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = "${data.recipe.readyMinutes.toString()} min",
-                                    style = MaterialTheme.typography.labelSmall
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
                                 )
                             }
                             Spacer(modifier = Modifier.width(8.dp))
@@ -366,12 +368,14 @@ fun InfoColumn(
                                 Icon(
                                     imageVector = Icons.Default.Recommend,
                                     contentDescription = "Likes",
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = data.recipe.likes ?: "0",
-                                    style = MaterialTheme.typography.labelSmall
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
                             }
                             Spacer(modifier = Modifier.width(8.dp))
@@ -387,12 +391,14 @@ fun InfoColumn(
                                 Icon(
                                     imageVector = Icons.Default.Restaurant,
                                     contentDescription = "Servings",
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = "${data.recipe.servings} servings",
-                                    style = MaterialTheme.typography.labelSmall
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
                             }
                         }

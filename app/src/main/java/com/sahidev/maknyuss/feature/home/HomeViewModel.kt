@@ -43,8 +43,8 @@ class HomeViewModel @Inject constructor(
             is HomeEvent.SearchRecipe -> {
                 viewModelScope.launch {
                     recipeUseCase.searchRecipe(event.query, event.offset)
-                        .collect { data ->
-                            recipeState.value = data
+                        .collect { recipes ->
+                            recipeState.value = recipes
                         }
 
                     if (event.query.isNotBlank()) {
@@ -106,8 +106,8 @@ class HomeViewModel @Inject constructor(
     private fun getRandomRecipes() {
         viewModelScope.launch {
             recipeUseCase.getRandomRecipe()
-                .collect { data ->
-                    recipeState.value = data
+                .collect { recipes ->
+                    recipeState.value = recipes
                 }
         }
     }

@@ -17,7 +17,6 @@ class RecipeUseCaseImpl @Inject constructor(
     override suspend fun getRecipeInfo(id: Int): Flow<Resource<RecipeAndInstructions>> =
         repository.getRecipeInfo(id)
 
-
     override suspend fun getRandomRecipe(): Flow<Resource<List<Recipe>>> =
         repository.getRandomRecipe()
 

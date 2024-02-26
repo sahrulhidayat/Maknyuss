@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -47,10 +48,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahidev.maknyuss.data.utils.Constant.DEFAULT_ERROR_MESSAGE
 import com.sahidev.maknyuss.domain.Resource
 import com.sahidev.maknyuss.domain.model.Recipe
-import com.sahidev.maknyuss.feature.component.MaknyussSearchBar
 import com.sahidev.maknyuss.feature.component.ErrorScreen
 import com.sahidev.maknyuss.feature.component.HomeSkeleton
 import com.sahidev.maknyuss.feature.component.ImageSlide
+import com.sahidev.maknyuss.feature.component.MaknyussSearchBar
 import com.sahidev.maknyuss.feature.component.MenuItem
 import com.sahidev.maknyuss.feature.component.RecipeCard
 import com.sahidev.maknyuss.feature.component.RecipeGrid
@@ -232,8 +233,8 @@ fun HomeScreen(
                             HomeGrid(
                                 data = data,
                                 topPadding = padding.calculateTopPadding(),
-                                onClickItem = onClickItem,
-                                modifier = Modifier.fillMaxSize()
+                                modifier = Modifier.fillMaxSize(),
+                                onClickItem = onClickItem
                             )
                         }
                         PullRefreshIndicator(
@@ -242,6 +243,7 @@ fun HomeScreen(
                             modifier = Modifier
                                 .align(Alignment.TopCenter)
                                 .padding(top = padding.calculateTopPadding())
+                                .offset(y = (-8).dp)
                         )
                     }
                 }
