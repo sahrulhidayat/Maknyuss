@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -38,6 +39,7 @@ import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.sahidev.maknyuss.domain.model.Price
 import com.sahidev.maknyuss.feature.utils.RandomColors
+import com.sahidev.maknyuss.feature.utils.drawVerticalScrollbar
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -51,6 +53,7 @@ fun PriceBreakDown(
     val sortedPrices = prices.sortedByDescending { it.price }
     val chartInput = remember { mutableStateOf(emptyList<PieChartInput>()) }
     val isCenterTapped = remember { mutableStateOf(false) }
+    val ingredientListState = rememberLazyListState()
 
     sortedPrices.map { price ->
         val priceValue = (price.price.toDouble() * 100).roundToInt()
@@ -96,7 +99,10 @@ fun PriceBreakDown(
                         centerText = "$${totalPrice}\nTotal"
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    LazyColumn {
+                    LazyColumn(
+                        modifier = Modifier.drawVerticalScrollbar(ingredientListState),
+                        state = ingredientListState
+                    ) {
                         item {
                             FlowRow(
                                 modifier = Modifier,
