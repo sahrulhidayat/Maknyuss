@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.sahidev.maknyuss.feature.about.aboutScreen
 import com.sahidev.maknyuss.feature.component.navigateToMenu
 import com.sahidev.maknyuss.feature.favorite.favoriteScreen
 import com.sahidev.maknyuss.feature.home.HOME_ROUTE
@@ -37,6 +38,9 @@ fun AppNavHost(
             onClickItem = { id ->
                 navController.navigate("${INFO_ROUTE}/$id")
             }
+        )
+        aboutScreen(
+            onBack = { navController.popBackStack() }
         )
     }
 }
