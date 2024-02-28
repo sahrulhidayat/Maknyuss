@@ -66,9 +66,9 @@ fun MaknyussSearchBar(
     var active by remember { mutableStateOf(false) }
 
     val colorGradient = arrayOf(
-        0.0f to MaterialTheme.colorScheme.primary,
-        0.5f to MaterialTheme.colorScheme.primary,
-        1f to MaterialTheme.colorScheme.primary.copy(0f)
+        0.0f to Color(0xFF008A9F),
+        0.31f to Color(0xFF00A179),
+        1f to Color(0x0000CC30)
     )
 
     Row(
@@ -160,7 +160,7 @@ fun MaknyussSearchBar(
                         ) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(24.dp),
-                                color = MaterialTheme.colorScheme.secondary,
+                                color = MaterialTheme.colorScheme.primary,
                                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
                             )
                             Spacer(modifier = Modifier.size(4.dp))
