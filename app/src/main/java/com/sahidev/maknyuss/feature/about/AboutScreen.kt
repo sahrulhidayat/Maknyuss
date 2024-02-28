@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.sahidev.maknyuss.BuildConfig
 import com.sahidev.maknyuss.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,6 +75,16 @@ fun AboutScreen(
                 style = MaterialTheme.typography.bodyLarge
             )
             Spacer(modifier = Modifier.size(16.dp))
+            Text(
+                text = "Maknyuss v${BuildConfig.VERSION_NAME} by:",
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "SAHIDEV",
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.size(4.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
