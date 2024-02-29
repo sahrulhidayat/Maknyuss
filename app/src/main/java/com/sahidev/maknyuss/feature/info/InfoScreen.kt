@@ -248,7 +248,7 @@ fun InfoColumn(
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .aspectRatio(480f / 360f)
+                            .aspectRatio(312f / 231f)
                             .fillMaxWidth()
                             .onGloballyPositioned { coordinates ->
                                 imageHeightDp =

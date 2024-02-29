@@ -76,7 +76,7 @@ fun ImageSlide(
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = modifier
-                            .aspectRatio(480f / 360f)
+                            .aspectRatio(312f / 231f)
                             .clickable { onClick(data[pagerState.currentPage].id) }
                     )
                 }

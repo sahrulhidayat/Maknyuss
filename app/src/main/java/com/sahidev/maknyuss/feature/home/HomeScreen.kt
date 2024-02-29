@@ -1,6 +1,8 @@
 package com.sahidev.maknyuss.feature.home
 
 import android.app.Activity
+import android.content.Intent
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +44,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,6 +67,7 @@ import com.sahidev.maknyuss.feature.component.RecipeGridSkeleton
 import com.sahidev.maknyuss.feature.component.menuItems
 import com.sahidev.maknyuss.ui.theme.MaknyussTheme
 import com.sahidev.maknyuss.ui.theme.backgroundLight
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -74,6 +79,15 @@ fun HomeScreen(
 ) {
     val view = LocalView.current
     val window = (view.context as Activity).window
+    val context = LocalContext.current
+
+    var exit by remember { mutableStateOf(false) }
+    LaunchedEffect(key1 = exit) {
+        if (exit) {
+            delay(2000)
+            exit = false
+        }
+    }
 
     val searchHistory = viewModel.searchHistory.value
     val autoCompleteSearch = viewModel.autoCompleteSearch.value
@@ -104,12 +118,27 @@ fun HomeScreen(
     }
 
     BackHandler {
-        if (showingSearchResult) {
-            viewModel.onEvent(HomeEvent.ShowingSearchResult(false))
-            viewModel.onEvent(HomeEvent.PullRefresh)
-        }
-        if (drawerState.isOpen) {
-            scope.launch { drawerState.close() }
+        when {
+            showingSearchResult -> {
+                viewModel.onEvent(HomeEvent.ShowingSearchResult(false))
+                viewModel.onEvent(HomeEvent.PullRefresh)
+            }
+
+            drawerState.isOpen -> {
+                scope.launch { drawerState.close() }
+            }
+
+            exit -> {
+                context.startActivity(Intent(Intent.ACTION_MAIN).apply {
+                    addCategory(Intent.CATEGORY_HOME)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                })
+            }
+
+            else -> {
+                exit = true
+                Toast.makeText(context, "Tap again to exit app", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

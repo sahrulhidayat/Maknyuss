@@ -26,7 +26,7 @@ object DataMapper {
             Recipe(
                 it.id,
                 it.title,
-                recipeImage(it.id, it.imageType, "480x360"),
+                recipeImage(it.id, it.imageType),
                 pricePerServing.toString(),
                 dishTypes = it.dishTypes,
                 diets = it.diets
@@ -114,7 +114,7 @@ object DataMapper {
         val recipe = Recipe(
             input.id,
             input.title,
-            recipeImage(input.id, input.imageType, "480x360"),
+            recipeImage(input.id, input.imageType),
             pricePerServing.toString(),
             totalCost = null,
             summary,
