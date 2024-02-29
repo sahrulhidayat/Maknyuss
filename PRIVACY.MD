@@ -48,7 +48,7 @@ These Services do not address anyone under the age of 13. I do not knowingly col
 ## Changes to This Privacy Policy
 
 I may update our Privacy Policy from time to time. Thus, you are advised to review this page periodically for any changes. I will notify you of any changes by posting the new Privacy Policy on this page.
-This policy is effective as of 2024-3-01
+This policy is effective as of 2024-03-01
 
 ## Contact Us
 
