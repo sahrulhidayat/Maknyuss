@@ -83,6 +83,7 @@ import com.sahidev.maknyuss.feature.component.HtmlText
 import com.sahidev.maknyuss.feature.component.IngredientCard
 import com.sahidev.maknyuss.feature.component.InstructionCard
 import com.sahidev.maknyuss.feature.component.PriceBreakDown
+import com.sahidev.maknyuss.feature.component.showInterstitialAd
 import com.sahidev.maknyuss.ui.theme.MaknyussTheme
 import kotlinx.coroutines.flow.collectLatest
 
@@ -93,6 +94,8 @@ fun InfoScreen(
     viewModel: InfoViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+
+    showInterstitialAd(context) {}
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         snapAnimationSpec = spring(stiffness = Spring.StiffnessHigh)

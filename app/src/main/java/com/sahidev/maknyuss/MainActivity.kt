@@ -7,6 +7,9 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.DisposableEffect
+import com.google.android.gms.ads.MobileAds
+import com.sahidev.maknyuss.feature.component.loadInterstitialAd
+import com.sahidev.maknyuss.feature.component.removeInterstitialAd
 import com.sahidev.maknyuss.navigation.AppNavHost
 import com.sahidev.maknyuss.ui.theme.MaknyussTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,6 +26,10 @@ class MainActivity : ComponentActivity() {
             )
         )
         super.onCreate(savedInstanceState)
+
+        MobileAds.initialize(this) {}
+        loadInterstitialAd(this)
+
         setContent {
             DisposableEffect(true) {
                 onDispose {}
@@ -32,5 +39,10 @@ class MainActivity : ComponentActivity() {
                 AppNavHost()
             }
         }
+    }
+
+    override fun onDestroy() {
+        removeInterstitialAd()
+        super.onDestroy()
     }
 }
