@@ -34,13 +34,13 @@ fun AdmobBanner(modifier: Modifier = Modifier) {
                 adWidth = coordinates.size.width
             }
             .semantics {
-                contentDescription = "Banner ads"
+                contentDescription = "Banner ad"
             },
         factory = { context ->
             val adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidth)
             AdView(context).apply {
                 setAdSize(adSize)
-                adUnitId = "ca-app-pub-3940256099942544/6300978111"
+                adUnitId = "ca-app-pub-9796581696289372/3584792649"
                 loadAd(AdRequest.Builder().build())
             }
         }
@@ -52,7 +52,7 @@ var mInterstitialAd: InterstitialAd? = null
 fun loadInterstitialAd(context: Context) {
     InterstitialAd.load(
         context,
-        "ca-app-pub-3940256099942544/1033173712",
+        "ca-app-pub-9796581696289372/7128699258",
         AdRequest.Builder().build(),
         object : InterstitialAdLoadCallback() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
