@@ -94,7 +94,6 @@ fun InfoScreen(
     viewModel: InfoViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-
     showInterstitialAd(context) {}
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(

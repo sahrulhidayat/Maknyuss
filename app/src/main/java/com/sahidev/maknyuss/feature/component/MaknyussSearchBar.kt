@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -180,6 +181,7 @@ fun MaknyussSearchBar(
                                 modifier = Modifier
                                     .padding(16.dp)
                                     .fillMaxWidth()
+                                    .heightIn(min = 48.dp)
                                     .border(
                                         width = 1.dp,
                                         color = MaterialTheme.colorScheme.onBackground,
@@ -265,7 +267,7 @@ fun MaknyussSearchBar(
                                         ) {
                                             AsyncImage(
                                                 model = it.image,
-                                                contentDescription = null,
+                                                contentDescription = it.query,
                                                 contentScale = ContentScale.Crop,
                                                 modifier = Modifier
                                                     .fillMaxSize()

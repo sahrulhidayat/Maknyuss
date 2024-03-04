@@ -344,7 +344,8 @@ fun InstructionCard(
     ) {
         Column(
             modifier = modifier
-                .padding(8.dp)
+                .padding(horizontal = 8.dp)
+                .padding(top = 8.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
