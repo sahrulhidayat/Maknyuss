@@ -44,6 +44,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -150,7 +152,8 @@ fun HomeScreen(
             ModalDrawerSheet(
                 modifier = Modifier
                     .width(300.dp)
-                    .fillMaxHeight()
+                    .fillMaxHeight(),
+                drawerContainerColor = Color.White
             ) {
                 Image(
                     modifier = Modifier.fillMaxWidth(),
@@ -168,11 +171,15 @@ fun HomeScreen(
                         },
                         selected = false,
                         icon = {
-                            Icon(
-                                imageVector = item.icon,
-                                contentDescription = item.title,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
+                            Box(
+                                modifier = Modifier.padding(start = 8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = item.icon,
+                                    contentDescription = item.title,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         },
                         onClick = {
                             navigateToMenu(item)
@@ -180,8 +187,10 @@ fun HomeScreen(
                                 drawerState.close()
                             }
                         },
-                        modifier = Modifier
-                            .padding(NavigationDrawerItemDefaults.ItemPadding)
+                        shape = RectangleShape,
+                        colors = NavigationDrawerItemDefaults.colors(
+                            unselectedContainerColor = Color.White
+                        )
                     )
                 }
             }

@@ -248,7 +248,7 @@ fun InfoColumn(
                 ) {
                     AsyncImage(
                         model = data.recipe.image,
-                        contentDescription = null,
+                        contentDescription = data.recipe.title,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .aspectRatio(312f / 231f)

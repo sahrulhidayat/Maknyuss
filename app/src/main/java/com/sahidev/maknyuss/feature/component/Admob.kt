@@ -11,6 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
@@ -30,6 +32,9 @@ fun AdmobBanner(modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .onGloballyPositioned { coordinates ->
                 adWidth = coordinates.size.width
+            }
+            .semantics {
+                contentDescription = "Banner ads"
             },
         factory = { context ->
             val adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, adWidth)

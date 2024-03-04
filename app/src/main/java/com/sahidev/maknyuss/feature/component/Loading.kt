@@ -25,6 +25,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sahidev.maknyuss.feature.utils.shimmerEffect
@@ -33,7 +35,11 @@ import com.sahidev.maknyuss.ui.theme.backgroundLight
 @Composable
 fun CircularLoading(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .semantics {
+                stateDescription = "Loading"
+            },
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
@@ -50,7 +56,11 @@ fun RecipeGridSkeleton(
     topPadding: Dp = 8.dp,
 ) {
     LazyVerticalGrid(
-        modifier = modifier.background(backgroundLight),
+        modifier = modifier
+            .background(backgroundLight)
+            .semantics {
+                stateDescription = "Loading"
+            },
         columns = GridCells.Adaptive(150.dp),
         contentPadding = PaddingValues(start = 8.dp, top = topPadding, end = 8.dp, bottom = 8.dp),
         userScrollEnabled = false
@@ -67,7 +77,11 @@ fun HomeSkeleton(
     topPadding: Dp = 8.dp,
 ) {
     LazyVerticalGrid(
-        modifier = modifier.background(backgroundLight),
+        modifier = modifier
+            .background(backgroundLight)
+            .semantics {
+                stateDescription = "Loading"
+            },
         columns = GridCells.Adaptive(150.dp),
         contentPadding = PaddingValues(start = 8.dp, top = topPadding, end = 8.dp, bottom = 8.dp),
         userScrollEnabled = false

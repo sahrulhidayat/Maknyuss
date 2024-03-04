@@ -73,7 +73,7 @@ fun ImageSlide(
                 ) {
                     AsyncImage(
                         model = data[index].image,
-                        contentDescription = null,
+                        contentDescription = data[index].title,
                         contentScale = ContentScale.Crop,
                         modifier = modifier
                             .aspectRatio(312f / 231f)
@@ -96,7 +96,7 @@ fun ImageSlide(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
-                    contentDescription = null,
+                    contentDescription = "Next image",
                     tint = Color.White,
                     modifier = Modifier
                         .size(32.dp)
@@ -118,7 +118,7 @@ fun ImageSlide(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Default.KeyboardArrowLeft,
-                    contentDescription = null,
+                    contentDescription = "Preview image",
                     tint = Color.White,
                     modifier = Modifier
                         .size(32.dp)

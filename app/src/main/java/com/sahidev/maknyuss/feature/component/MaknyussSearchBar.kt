@@ -93,7 +93,7 @@ fun MaknyussSearchBar(
             placeholder = {
                 Text(
                     text = "Search Recipe",
-                    color = Color.Gray
+                    color = Color.DarkGray
                 )
             },
             leadingIcon = {

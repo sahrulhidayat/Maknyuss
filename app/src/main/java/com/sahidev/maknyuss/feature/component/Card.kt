@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -66,7 +67,7 @@ fun RecipeCard(
         ) {
             AsyncImage(
                 model = recipe.image,
-                contentDescription = null,
+                contentDescription = recipe.title,
                 contentScale = ContentScale.Crop,
                 alignment = Alignment.TopCenter,
                 modifier = Modifier
@@ -193,8 +194,8 @@ fun IngredientCard(
         ) {
             Row(
                 modifier = Modifier
-                    .padding(vertical = 4.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -204,15 +205,17 @@ fun IngredientCard(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 if (expanded) {
-                    Icon(imageVector = Icons.Default.ExpandLess, contentDescription = "")
+                    Icon(imageVector = Icons.Default.ExpandLess, contentDescription = "Expand less")
                 } else {
-                    Icon(imageVector = Icons.Default.ExpandMore, contentDescription = "")
+                    Icon(imageVector = Icons.Default.ExpandMore, contentDescription = "Expand more")
                 }
             }
 
             if (expanded) {
                 FlowRow(
-                    modifier = Modifier.padding(4.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .padding(bottom = 8.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     ingredients.forEach { ingredient ->
@@ -225,7 +228,7 @@ fun IngredientCard(
                             ) {
                                 AsyncImage(
                                     model = ingredient.image,
-                                    contentDescription = null,
+                                    contentDescription = ingredient.name,
                                     modifier = Modifier
                                         .aspectRatio(80f / 80f)
                                         .fillMaxSize()
@@ -269,8 +272,8 @@ fun EquipmentCard(
         ) {
             Row(
                 modifier = Modifier
-                    .padding(vertical = 4.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -280,15 +283,17 @@ fun EquipmentCard(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 if (expanded) {
-                    Icon(imageVector = Icons.Default.ExpandLess, contentDescription = "")
+                    Icon(imageVector = Icons.Default.ExpandLess, contentDescription = "Expand less")
                 } else {
-                    Icon(imageVector = Icons.Default.ExpandMore, contentDescription = "")
+                    Icon(imageVector = Icons.Default.ExpandMore, contentDescription = "Expand more")
                 }
             }
 
             if (expanded) {
                 FlowRow(
-                    modifier = Modifier.padding(4.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .padding(bottom = 8.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     equipments.forEach { ingredient ->
@@ -301,7 +306,7 @@ fun EquipmentCard(
                             ) {
                                 AsyncImage(
                                     model = ingredient.image,
-                                    contentDescription = null,
+                                    contentDescription = ingredient.name,
                                     modifier = Modifier
                                         .aspectRatio(80f / 80f)
                                         .fillMaxSize()
@@ -339,7 +344,7 @@ fun InstructionCard(
     ) {
         Column(
             modifier = modifier
-                .padding(4.dp)
+                .padding(8.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -407,7 +412,7 @@ fun EquipmentAndIngredient(
                         ) {
                             AsyncImage(
                                 model = ingredient.image,
-                                contentDescription = null,
+                                contentDescription = ingredient.name,
                                 modifier = Modifier
                                     .aspectRatio(70f / 70f)
                                     .fillMaxSize()
@@ -441,7 +446,7 @@ fun EquipmentAndIngredient(
                         ) {
                             AsyncImage(
                                 model = equipment.image,
-                                contentDescription = null,
+                                contentDescription = equipment.name,
                                 modifier = Modifier
                                     .aspectRatio(70f / 70f)
                                     .fillMaxSize()
