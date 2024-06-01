@@ -80,7 +80,7 @@ data class StepsItem(
 data class IngredientsItem(
 
 	@field:SerializedName("image")
-	val image: String?,
+	val image: String,
 
 	@field:SerializedName("name")
 	val name: String,
@@ -89,7 +89,7 @@ data class IngredientsItem(
 data class EquipmentItem(
 
 	@field:SerializedName("image")
-	val image: String?,
+	val image: String,
 
 	@field:SerializedName("name")
 	val name: String,

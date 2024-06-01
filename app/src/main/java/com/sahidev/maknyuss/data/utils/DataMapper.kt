@@ -200,7 +200,7 @@ object DataMapper {
             input.map {
                 Equipment(
                     it.name.capitalize(),
-                    equipmentImage(it.image)
+                    it.image
                 )
             }
         } else {
@@ -214,7 +214,7 @@ object DataMapper {
         return input.map {
             Ingredient(
                 it.name.capitalize(),
-                ingredientImage(it.image)
+                it.image
             )
         }
     }
@@ -242,12 +242,5 @@ object DataMapper {
         size: String = "100x100"
     ): String {
         return "https://spoonacular.com/cdn/ingredients_${size}/${ingredient?.ifBlank { "ingredient.jpg" }}"
-    }
-
-    private fun equipmentImage(
-        equipment: String? = "equipment.jpg",
-        size: String = "100x100"
-    ): String {
-        return "https://spoonacular.com/cdn/equipment_${size}/${equipment?.ifBlank { "equipment.jpg" }}"
     }
 }

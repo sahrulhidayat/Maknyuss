@@ -1,5 +1,6 @@
 package com.sahidev.maknyuss.feature.info
 
+import android.util.Log
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
