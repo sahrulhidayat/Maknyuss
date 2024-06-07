@@ -1,9 +1,9 @@
 [versions]
-activity-compose = "1.8.2"
-agp = "8.3.0"
+activity-compose = "1.9.0"
+agp = "8.4.1"
 androidx-junit = "1.1.5"
 coilCompose = "2.5.0"
-core-ktx = "1.12.0"
+core-ktx = "1.13.1"
 coreSplashscreen = "1.0.1"
 daggerHilt = "2.50"
 espressoCore = "3.5.1"
@@ -13,14 +13,14 @@ hilt-navigation-compose = "1.2.0"
 hiltAndroid = "2.50"
 hiltAndroidCompiler = "2.50"
 junit = "4.13.2"
-kotlin = "1.9.22"
-ksp = "1.9.22-1.0.17"
-lifecycle-runtime-ktx = "2.7.0"
+kotlin = "2.0.0"
+ksp = "2.0.0-1.0.21"
+lifecycle-runtime-ktx = "2.8.1"
 loggingInterceptor = "4.12.0"
-playServicesAds = "22.6.0"
+playServicesAds = "23.1.0"
 retrofitVersion = "2.9.0"
 room-ktx = "2.6.1"
-compose-bom = "2024.02.01"
+compose-bom = "2024.05.00"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
@@ -56,6 +56,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 daggerHilt = { id = "com.google.dagger.hilt.android", version.ref = "daggerHilt" }
 room = { id = "androidx.room", version.ref = "room-ktx" }
