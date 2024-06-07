@@ -1,6 +1,5 @@
 package com.sahidev.maknyuss.feature.home
 
-import android.app.Activity
 import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -35,7 +34,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,12 +45,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sahidev.maknyuss.R
 import com.sahidev.maknyuss.data.utils.Constant.DEFAULT_ERROR_MESSAGE
@@ -80,8 +76,6 @@ fun HomeScreen(
     navigateToMenu: (item: MenuItem) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val view = LocalView.current
-    val window = (view.context as Activity).window
     val context = LocalContext.current
 
     var exit by remember { mutableStateOf(false) }
@@ -112,13 +106,6 @@ fun HomeScreen(
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-
-    DisposableEffect(view) {
-        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-        onDispose {
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
-        }
-    }
 
     BackHandler {
         when {

@@ -1,15 +1,10 @@
 package com.sahidev.maknyuss.feature.info
 
-import android.util.Log
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -21,10 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -41,6 +34,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -58,6 +52,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -78,12 +73,13 @@ import com.sahidev.maknyuss.domain.model.Instruction
 import com.sahidev.maknyuss.domain.model.Recipe
 import com.sahidev.maknyuss.domain.model.RecipeAndInstructions
 import com.sahidev.maknyuss.feature.component.CircularLoading
-import com.sahidev.maknyuss.feature.component.EquipmentCard
+import com.sahidev.maknyuss.feature.component.EquipmentRow
 import com.sahidev.maknyuss.feature.component.ErrorScreen
 import com.sahidev.maknyuss.feature.component.HtmlText
-import com.sahidev.maknyuss.feature.component.IngredientCard
-import com.sahidev.maknyuss.feature.component.InstructionCard
+import com.sahidev.maknyuss.feature.component.IngredientRow
+import com.sahidev.maknyuss.feature.component.InstructionRow
 import com.sahidev.maknyuss.feature.component.PriceBreakDown
+import com.sahidev.maknyuss.feature.component.TagsRow
 import com.sahidev.maknyuss.feature.component.showInterstitialAd
 import com.sahidev.maknyuss.ui.theme.MaknyussTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -133,14 +129,18 @@ fun InfoScreen(
                 TopAppBar(
                     title = {},
                     navigationIcon = {
-                        IconButton(onClick = onBack) {
+                        IconButton(
+                            onClick = onBack,
+                            colors = IconButtonDefaults.iconButtonColors(
+                                contentColor = Color(0, 0, 0, 150),
+                                containerColor = Color(255, 255, 255, 100)
+                            )
+                        ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Default.ArrowBack,
                                 contentDescription = "Back",
-                                tint = Color.White,
                                 modifier = Modifier
                                     .clip(CircleShape)
-                                    .background(Color.DarkGray.copy(0.4f))
                                     .padding(8.dp)
                             )
                         }
@@ -260,177 +260,194 @@ fun InfoColumn(
                     )
                 }
                 Column(
-                    modifier = Modifier
-                        .padding(top = imageHeightDp - 16.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.background,
-                            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                        )
-                        .padding(horizontal = 12.dp)
+                    modifier = Modifier.padding(top = imageHeightDp - 64.dp)
                 ) {
-                    Spacer(modifier = Modifier.size(12.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = data.recipe.title,
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "$${data.recipe.pricePerServing}",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Spacer(modifier = Modifier.size(8.dp))
-                        Text(
-                            text = "per serving",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        IconButton(
-                            onClick = { onPriceClick() }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Info,
-                                contentDescription = "Open price breakdown",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                        Spacer(modifier = Modifier.weight(1f))
-                        if (data.recipe.favorite) {
-                            IconButton(
-                                onClick = { toggleFavorite(false) }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Favorite,
-                                    contentDescription = "Toggle favorite",
-                                    tint = Color.Red
-                                )
-                            }
-                        } else {
-                            IconButton(onClick = { toggleFavorite(true) }) {
-                                Icon(
-                                    imageVector = Icons.Default.FavoriteBorder,
-                                    contentDescription = "Toggle not favorite"
-                                )
-                            }
-                        }
-                        IconButton(onClick = { onShareRecipe() }) {
-                            Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = "Share recipe",
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.width(4.dp))
-                    LazyRow(
+                    Box(
                         modifier = Modifier
-                            .padding(vertical = 4.dp)
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                            .height(64.dp)
+                            .fillMaxWidth()
+                            .background(
+                                Brush.verticalGradient(
+                                    0f to Color.Transparent,
+                                    1f to MaterialTheme.colorScheme.background
+                                )
+                            )
+                    )
+                    Column(
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(8.dp)
                     ) {
-                        item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = data.recipe.title,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                        Spacer(modifier = Modifier.size(4.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
                             Row(
-                                modifier = Modifier
-                                    .background(
-                                        color = MaterialTheme.colorScheme.secondaryContainer,
-                                        shape = RoundedCornerShape(24.dp)
-                                    )
-                                    .padding(horizontal = 6.dp, vertical = 4.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Timer,
                                     contentDescription = "Ready minutes",
-                                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                                    modifier = Modifier.size(20.dp)
+                                    tint = MaterialTheme.colorScheme.outline,
+                                    modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = "${data.recipe.readyMinutes.toString()} min",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    color = MaterialTheme.colorScheme.outline,
                                 )
                             }
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(16.dp))
                             Row(
-                                modifier = Modifier
-                                    .background(
-                                        color = MaterialTheme.colorScheme.secondaryContainer,
-                                        shape = RoundedCornerShape(24.dp)
-                                    )
-                                    .padding(horizontal = 6.dp, vertical = 4.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Recommend,
                                     contentDescription = "Likes",
-                                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                                    modifier = Modifier.size(20.dp)
+                                    tint = MaterialTheme.colorScheme.outline,
+                                    modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = data.recipe.likes ?: "0",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                    color = MaterialTheme.colorScheme.outline
                                 )
                             }
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(16.dp))
                             Row(
-                                modifier = Modifier
-                                    .background(
-                                        color = MaterialTheme.colorScheme.secondaryContainer,
-                                        shape = RoundedCornerShape(24.dp)
-                                    )
-                                    .padding(horizontal = 6.dp, vertical = 4.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Restaurant,
                                     contentDescription = "Servings",
-                                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                                    modifier = Modifier.size(20.dp)
+                                    tint = MaterialTheme.colorScheme.outline,
+                                    modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = "${data.recipe.servings} servings",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                    color = MaterialTheme.colorScheme.outline
                                 )
                             }
                         }
-                    }
-                    HtmlText(html = data.recipe.summary ?: "<b>No descriptions</b>")
-                    Spacer(modifier = Modifier.size(8.dp))
-                    IngredientCard(ingredients = data.recipe.ingredients)
-                    Spacer(modifier = Modifier.size(8.dp))
-                    EquipmentCard(equipments = data.recipe.equipments)
-                    Spacer(modifier = Modifier.size(8.dp))
-                    Text(
-                        text = "Instructions:",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.size(8.dp))
-                    if (data.instructions.isEmpty()) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "No instructions provided",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = Color.Gray,
-                                fontStyle = FontStyle.Italic
+                                text = "$${data.recipe.pricePerServing}",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.SemiBold
                             )
+                            Spacer(modifier = Modifier.size(8.dp))
+                            Text(
+                                text = "per serving",
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                            IconButton(
+                                onClick = { onPriceClick() }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Info,
+                                    contentDescription = "Open price breakdown",
+                                    tint = MaterialTheme.colorScheme.outline
+                                )
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                            if (data.recipe.favorite) {
+                                IconButton(
+                                    onClick = { toggleFavorite(false) }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Favorite,
+                                        contentDescription = "Toggle favorite",
+                                        tint = Color.Red
+                                    )
+                                }
+                            } else {
+                                IconButton(onClick = { toggleFavorite(true) }) {
+                                    Icon(
+                                        imageVector = Icons.Default.FavoriteBorder,
+                                        contentDescription = "Toggle not favorite",
+                                        tint = MaterialTheme.colorScheme.outline
+                                    )
+                                }
+                            }
+                            IconButton(onClick = { onShareRecipe() }) {
+                                Icon(
+                                    imageVector = Icons.Default.Share,
+                                    contentDescription = "Share recipe",
+                                    tint = MaterialTheme.colorScheme.outline
+                                )
+                            }
+                        }
+
+                        Text(
+                            text = "Description",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(modifier = Modifier.size(4.dp))
+                        HtmlText(html = data.recipe.summary ?: "<b>No descriptions</b>")
+                        Spacer(modifier = Modifier.size(8.dp))
+
+                        Text(
+                            text = "Ingredients",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+
+                        Spacer(modifier = Modifier.size(8.dp))
+                        IngredientRow(ingredients = data.recipe.ingredients)
+                        Spacer(modifier = Modifier.size(8.dp))
+
+                        Text(
+                            text = "Equipments",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+
+                        Spacer(modifier = Modifier.size(8.dp))
+                        EquipmentRow(equipments = data.recipe.equipments)
+                        Spacer(modifier = Modifier.size(8.dp))
+
+                        Text(
+                            text = "Instructions",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        if (data.instructions.isEmpty()) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "No instructions provided",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = Color.Gray,
+                                    fontStyle = FontStyle.Italic
+                                )
+                            }
                         }
                     }
                 }
@@ -438,26 +455,12 @@ fun InfoColumn(
         }
         if (data.instructions.isNotEmpty()) {
             items(data.instructions) { instruction ->
-                InstructionCard(instruction = instruction)
-            }
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Maknyuss \uD83D\uDC4C",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
+                InstructionRow(instruction = instruction)
             }
         }
         if (data.recipe.dishTypes.isNotEmpty() || data.recipe.diets.isNotEmpty()) {
             item {
+                Spacer(modifier = Modifier.size(8.dp))
                 TagsRow(
                     dishTypes = data.recipe.dishTypes,
                     diets = data.recipe.diets
@@ -467,67 +470,7 @@ fun InfoColumn(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun TagsRow(dishTypes: List<String>, diets: List<String>, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp)
-    ) {
-        Text(
-            text = "Tags:",
-            style = MaterialTheme.typography.titleMedium
-        )
-        Spacer(modifier = Modifier.size(4.dp))
-        FlowRow(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            dishTypes.forEach { dishType ->
-                Box(
-                    modifier = Modifier
-                        .padding(2.dp)
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = RoundedCornerShape(4.dp)
-                        )
-                        .padding(vertical = 2.dp, horizontal = 4.dp)
-                ) {
-                    Text(
-                        text = dishType,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        maxLines = 1,
-                    )
-                }
-            }
-            diets.forEach { diet ->
-                Box(
-                    modifier = Modifier
-                        .padding(2.dp)
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = RoundedCornerShape(4.dp)
-                        )
-                        .padding(vertical = 2.dp, horizontal = 4.dp)
-                ) {
-                    Text(
-                        text = diet,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        maxLines = 1,
-                    )
-                }
-            }
-        }
-        Spacer(modifier = Modifier.size(12.dp))
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true, heightDp = 1000)
 @Composable
 fun InfoScreenPreview(@PreviewParameter(LoremIpsum::class) lorem: String) {
     val dummyData = RecipeAndInstructions(

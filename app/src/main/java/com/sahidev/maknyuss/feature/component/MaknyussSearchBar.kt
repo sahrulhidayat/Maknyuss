@@ -1,6 +1,5 @@
 package com.sahidev.maknyuss.feature.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +39,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
@@ -66,16 +64,9 @@ fun MaknyussSearchBar(
 ) {
     var active by remember { mutableStateOf(false) }
 
-    val colorGradient = arrayOf(
-        0.0f to Color(0xFF008A9F),
-        0.31f to Color(0xFF00A179),
-        1f to Color(0x0000CC30)
-    )
-
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(Brush.verticalGradient(colorStops = colorGradient))
             .padding(bottom = 8.dp),
         horizontalArrangement = Arrangement.Center
     ) {
